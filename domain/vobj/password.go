@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"packages/context"
-	"packages/errors"
+	"go-gin-ddd/packages/context"
+	"go-gin-ddd/packages/errors"
 
 	"go-gin-ddd/config"
 )

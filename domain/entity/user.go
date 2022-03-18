@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"packages/context"
+	"go-gin-ddd/packages/context"
 
 	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/vobj"

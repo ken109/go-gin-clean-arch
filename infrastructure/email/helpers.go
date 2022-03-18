@@ -6,7 +6,7 @@ import (
 
 	"jaytaylor.com/html2text"
 
-	"packages/errors"
+	"go-gin-ddd/packages/errors"
 )
 
 func htmlToPlain(body Body) (string, error) {

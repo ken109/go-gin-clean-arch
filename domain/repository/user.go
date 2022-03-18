@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"packages/context"
+	"go-gin-ddd/packages/context"
 
 	"go-gin-ddd/domain/entity"
 )

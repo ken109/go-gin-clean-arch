@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go-gin-ddd/packages/errors"
 	"go.uber.org/zap"
-	"packages/errors"
 )
 
 func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {

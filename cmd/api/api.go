@@ -12,8 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
 
-	"packages/http/middleware"
-	"packages/http/router"
+	"go-gin-ddd/packages/http/middleware"
+	"go-gin-ddd/packages/http/router"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/driver/rdb"

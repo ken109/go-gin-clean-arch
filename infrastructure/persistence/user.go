@@ -1,7 +1,7 @@
 package persistence
 
 import (
-	"packages/context"
+	"go-gin-ddd/packages/context"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"

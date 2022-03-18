@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-gin-ddd/config"
 
-	"packages/context"
+	"go-gin-ddd/packages/context"
 
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/usecase"

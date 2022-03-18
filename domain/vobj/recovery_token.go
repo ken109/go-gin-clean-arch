@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"packages/errors"
+	"go-gin-ddd/packages/errors"
 
 	"go-gin-ddd/config"
 )

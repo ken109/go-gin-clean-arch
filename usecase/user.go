@@ -5,8 +5,8 @@ import (
 
 	jwt "github.com/ken109/gin-jwt"
 
-	"packages/context"
-	"packages/errors"
+	"go-gin-ddd/packages/context"
+	"go-gin-ddd/packages/errors"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/domain/entity"

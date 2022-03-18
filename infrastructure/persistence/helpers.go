@@ -3,7 +3,7 @@ package persistence
 import (
 	"gorm.io/gorm"
 
-	"packages/errors"
+	"go-gin-ddd/packages/errors"
 )
 
 func dbError(err error) error {
