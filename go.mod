@@ -15,7 +15,7 @@ require (
 	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/ken109/gin-jwt v1.1.4
+	github.com/ken109/gin-jwt v1.1.5
 	github.com/noknow-hub/go_crypto v0.0.0-20190921184517-be89dab92b85
 	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.21.0

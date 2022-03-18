@@ -219,8 +219,8 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
 github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
-github.com/ken109/gin-jwt v1.1.4 h1:wyWP7ijqyX4iX66C34kV9ThVao0ji5AA4DfhZbwZu+4=
-github.com/ken109/gin-jwt v1.1.4/go.mod h1:fZRqrXLRxzyGQ+dztwC1CveJemkz0Lrg36OJCWZak68=
+github.com/ken109/gin-jwt v1.1.5 h1:rdd2n2ePTp0pSztgx59rY3ve2dzc3fcrjZzkfcDLv0Q=
+github.com/ken109/gin-jwt v1.1.5/go.mod h1:NUhWrjGfQvlZXYToyQsWsAn3ofPwkQzY0w3EwOal/ks=
 github.com/ken109/validator/v10 v10.9.1-0.20211113103440-ec8ebbbebe05 h1:7XbRdTpAC00HsPtKUkkqnVsjcXmGfar+7eyiZugcWiY=
 github.com/ken109/validator/v10 v10.9.1-0.20211113103440-ec8ebbbebe05/go.mod h1:74x4gJWsvQexRdW8Pn3dXSGrTK4nAUsbPlLADvpJkos=
 github.com/kidstuff/mongostore v0.0.0-20181113001930-e650cd85ee4b/go.mod h1:g2nVr8KZVXJSS97Jo8pJ0jgq29P6H7dG0oplUA86MQw=
