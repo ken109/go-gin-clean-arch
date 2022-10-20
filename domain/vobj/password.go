@@ -31,8 +31,8 @@ func NewPassword(ctx context.Context, password, passwordConfirm string) (*Passwo
 	return &value, nil
 }
 
-func (p Password) IsValid(password string) bool {
-	return bcrypt.CompareHashAndPassword([]byte(p), []byte(password)) == nil
+func (p *Password) IsValid(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(*p), []byte(password)) == nil
 }
 
 // sql
@@ -49,24 +49,24 @@ func (p *Password) Scan(value interface{}) error {
 	return nil
 }
 
-func (p Password) Value() (driver.Value, error) {
-	return string(p), nil
+func (p *Password) Value() (driver.Value, error) {
+	return string(*p), nil
 }
 
 // GormDataType gorm common data type
-func (p Password) GormDataType() string {
+func (p *Password) GormDataType() string {
 	return "password"
 }
 
 // GormDBDataType gorm db data type
-func (p Password) GormDBDataType(_ *gorm.DB, _ *schema.Field) string {
+func (p *Password) GormDBDataType(_ *gorm.DB, _ *schema.Field) string {
 	return "longtext"
 }
 
 // json
 
-func (p Password) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + p + "\""), nil
+func (p *Password) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + *p + "\""), nil
 }
 
 func (p *Password) UnmarshalJSON(b []byte) error {

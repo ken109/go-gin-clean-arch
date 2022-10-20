@@ -37,12 +37,12 @@ func (p *RecoveryToken) Generate() (time.Duration, time.Time, error) {
 	return duration, expire, nil
 }
 
-func (p RecoveryToken) IsValid() bool {
-	if len(string(p)) < 16 {
+func (p *RecoveryToken) IsValid() bool {
+	if len(string(*p)) < 16 {
 		return false
 	}
 
-	decrypted, err := crypto.DecryptCTR(string(p), config.Env.App.Secret)
+	decrypted, err := crypto.DecryptCTR(string(*p), config.Env.App.Secret)
 	if err != nil {
 		return false
 	}
@@ -55,8 +55,8 @@ func (p RecoveryToken) IsValid() bool {
 	return time.Now().Before(expire)
 }
 
-func (p RecoveryToken) String() string {
-	return string(p)
+func (p *RecoveryToken) String() string {
+	return string(*p)
 }
 
 func (p *RecoveryToken) Clear() {
@@ -77,24 +77,24 @@ func (p *RecoveryToken) Scan(value interface{}) error {
 	return nil
 }
 
-func (p RecoveryToken) Value() (driver.Value, error) {
-	return string(p), nil
+func (p *RecoveryToken) Value() (driver.Value, error) {
+	return string(*p), nil
 }
 
 // GormDataType gorm common data type
-func (p RecoveryToken) GormDataType() string {
+func (p *RecoveryToken) GormDataType() string {
 	return "recovery_token"
 }
 
 // GormDBDataType gorm db data type
-func (p RecoveryToken) GormDBDataType(_ *gorm.DB, _ *schema.Field) string {
+func (p *RecoveryToken) GormDBDataType(_ *gorm.DB, _ *schema.Field) string {
 	return "varchar(256)"
 }
 
 // json
 
-func (p RecoveryToken) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + p + "\""), nil
+func (p *RecoveryToken) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + *p + "\""), nil
 }
 
 func (p *RecoveryToken) UnmarshalJSON(b []byte) error {
