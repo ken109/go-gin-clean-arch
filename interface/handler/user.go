@@ -6,6 +6,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-gin-ddd/config"
+	"go-gin-ddd/packages/http/middleware"
+	"go-gin-ddd/packages/http/router"
 
 	"go-gin-ddd/packages/context"
 
@@ -13,17 +15,29 @@ import (
 	"go-gin-ddd/usecase"
 )
 
-type User struct {
+type user struct {
 	userUseCase usecase.IUser
 }
 
-func NewUser(uuc usecase.IUser) *User {
-	return &User{
-		userUseCase: uuc,
-	}
+func NewUser(r *router.Router, uuc usecase.IUser) {
+	handler := user{userUseCase: uuc}
+
+	r.Group("user", nil, func(r *router.Router) {
+		r.Post("", handler.Create)
+		r.Post("login", handler.Login)
+		r.Post("refresh-token", handler.RefreshToken)
+		r.Patch("reset-password-request", handler.ResetPasswordRequest)
+		r.Patch("reset-password", handler.ResetPassword)
+	})
+
+	r.Group("", []gin.HandlerFunc{middleware.Auth(true, config.UserRealm, true)}, func(r *router.Router) {
+		r.Group("user", nil, func(r *router.Router) {
+			r.Get("me", handler.GetMe)
+		})
+	})
 }
 
-func (u User) Create(ctx context.Context, c *gin.Context) error {
+func (u user) Create(ctx context.Context, c *gin.Context) error {
 	var req request.UserCreate
 
 	if !bind(c, &req) {
@@ -39,7 +53,7 @@ func (u User) Create(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
+func (u user) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
 	var req request.UserResetPasswordRequest
 
 	if !bind(c, &req) {
@@ -55,7 +69,7 @@ func (u User) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) ResetPassword(ctx context.Context, c *gin.Context) error {
+func (u user) ResetPassword(ctx context.Context, c *gin.Context) error {
 	var req request.UserResetPassword
 
 	if !bind(c, &req) {
@@ -71,7 +85,7 @@ func (u User) ResetPassword(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) Login(ctx context.Context, c *gin.Context) error {
+func (u user) Login(ctx context.Context, c *gin.Context) error {
 	var req request.UserLogin
 
 	if !bind(c, &req) {
@@ -103,7 +117,7 @@ func (u User) Login(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
+func (u user) RefreshToken(_ context.Context, c *gin.Context) error {
 	var req request.UserRefreshToken
 
 	if !bind(c, &req) {
@@ -135,7 +149,7 @@ func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) GetMe(ctx context.Context, c *gin.Context) error {
+func (u user) GetMe(ctx context.Context, c *gin.Context) error {
 	user, err := u.userUseCase.GetByID(ctx, ctx.UID())
 	if err != nil {
 		return err

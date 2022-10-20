@@ -52,6 +52,8 @@ func Execute() {
 	// cookie
 	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
 
+	r := router.New(engine, rdb.Get)
+
 	// dependencies injection
 	// ----- infrastructure -----
 	emailDriver := email.New()
@@ -63,26 +65,9 @@ func Execute() {
 	userUseCase := usecase.NewUser(emailDriver, userPersistence)
 
 	// ----- handler -----
-	userHandler := handler.NewUser(userUseCase)
+	handler.NewUser(r, userUseCase)
 
-	r := router.New(engine, rdb.Get)
-
-	// routes
-	r.Group("user", nil, func(r *router.Router) {
-		r.Post("", userHandler.Create)
-		r.Post("login", userHandler.Login)
-		r.Post("refresh-token", userHandler.RefreshToken)
-		r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
-		r.Patch("reset-password", userHandler.ResetPassword)
-	})
-
-	r.Group("", []gin.HandlerFunc{middleware.Auth(true, config.UserRealm, true)}, func(r *router.Router) {
-		r.Group("user", nil, func(r *router.Router) {
-			r.Get("me", userHandler.GetMe)
-		})
-	})
-
-	logger.Info("Succeeded in setting up routes.")
+	logger.Info("Succeeded in dependencies injection.")
 
 	// serve
 	srv := &http.Server{
