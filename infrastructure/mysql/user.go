@@ -1,4 +1,4 @@
-package persistence
+package mysql
 
 import (
 	"go-gin-ddd/domain"

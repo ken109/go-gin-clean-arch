@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
+	mysqlRepository "go-gin-ddd/infrastructure/mysql"
 
 	"go-gin-ddd/packages/http/middleware"
 	"go-gin-ddd/packages/http/router"
@@ -20,7 +21,6 @@ import (
 	"go-gin-ddd/driver/rdb"
 	"go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/infrastructure/log"
-	"go-gin-ddd/infrastructure/persistence"
 	"go-gin-ddd/usecase"
 )
 
@@ -58,11 +58,11 @@ func Execute() {
 	// ----- infrastructure -----
 	emailDriver := email.New()
 
-	// persistence
-	userPersistence := persistence.NewUser()
+	// mysql
+	userRepository := mysqlRepository.NewUser()
 
 	// ----- usecase -----
-	userUseCase := usecase.NewUser(emailDriver, userPersistence)
+	userUseCase := usecase.NewUser(emailDriver, userRepository)
 
 	// ----- controller -----
 	httpController.NewUser(r, userUseCase)
