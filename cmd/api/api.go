@@ -16,11 +16,11 @@ import (
 	"go-gin-ddd/packages/http/router"
 
 	"go-gin-ddd/config"
+	httpController "go-gin-ddd/controller/http"
 	"go-gin-ddd/driver/rdb"
 	"go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/infrastructure/log"
 	"go-gin-ddd/infrastructure/persistence"
-	"go-gin-ddd/interface/handler"
 	"go-gin-ddd/usecase"
 )
 
@@ -61,11 +61,11 @@ func Execute() {
 	// persistence
 	userPersistence := persistence.NewUser()
 
-	// ----- use case -----
+	// ----- usecase -----
 	userUseCase := usecase.NewUser(emailDriver, userPersistence)
 
-	// ----- handler -----
-	handler.NewUser(r, userUseCase)
+	// ----- controller -----
+	httpController.NewUser(r, userUseCase)
 
 	logger.Info("Succeeded in dependencies injection.")
 
