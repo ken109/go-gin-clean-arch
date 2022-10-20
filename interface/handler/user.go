@@ -6,20 +6,20 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-gin-ddd/config"
+	"go-gin-ddd/domain"
 	"go-gin-ddd/packages/http/middleware"
 	"go-gin-ddd/packages/http/router"
 
 	"go-gin-ddd/packages/context"
 
 	"go-gin-ddd/resource/request"
-	"go-gin-ddd/usecase"
 )
 
 type user struct {
-	userUseCase usecase.IUser
+	userUseCase domain.UserUsecase
 }
 
-func NewUser(r *router.Router, uuc usecase.IUser) {
+func NewUser(r *router.Router, uuc domain.UserUsecase) {
 	handler := user{userUseCase: uuc}
 
 	r.Group("user", nil, func(r *router.Router) {

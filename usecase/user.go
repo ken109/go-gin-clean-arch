@@ -4,38 +4,23 @@ import (
 	"net/http"
 
 	jwt "github.com/ken109/gin-jwt"
+	"go-gin-ddd/domain"
 
 	"go-gin-ddd/packages/context"
 	"go-gin-ddd/packages/errors"
 
 	"go-gin-ddd/config"
-	"go-gin-ddd/domain/entity"
-	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 )
 
-type IUser interface {
-	Create(ctx context.Context, req *request.UserCreate) (uint, error)
-
-	ResetPasswordRequest(
-		ctx context.Context,
-		req *request.UserResetPasswordRequest,
-	) (*response.UserResetPasswordRequest, error)
-	ResetPassword(ctx context.Context, req *request.UserResetPassword) error
-	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
-	RefreshToken(refreshToken string) (*response.UserLogin, error)
-
-	GetByID(ctx context.Context, id uint) (*entity.User, error)
-}
-
 type user struct {
 	email    emailInfra.IEmail
-	userRepo repository.IUser
+	userRepo domain.UserRepository
 }
 
-func NewUser(email emailInfra.IEmail, tr repository.IUser) IUser {
+func NewUser(email emailInfra.IEmail, tr domain.UserRepository) domain.UserUsecase {
 	return &user{
 		email:    email,
 		userRepo: tr,
@@ -52,7 +37,7 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 		ctx.FieldError("Email", "既に使用されています")
 	}
 
-	newUser, err := entity.NewUser(ctx, req)
+	newUser, err := domain.NewUser(ctx, req)
 	if err != nil {
 		return 0, err
 	}
@@ -174,6 +159,6 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 	return &res, nil
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
+func (u user) GetByID(ctx context.Context, id uint) (*domain.User, error) {
 	return u.userRepo.GetByID(ctx, id)
 }
