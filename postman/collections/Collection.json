@@ -1,0 +1,331 @@
+{
+	"info": {
+		"_postman_id": "f3ae684c-1d7d-49d6-bca4-f9ea6027e19f",
+		"name": "Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "18350312-f3ae684c-1d7d-49d6-bca4-f9ea6027e19f"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create",
+					"id": "074f205b-cc78-40a3-b745-fbc16ac3d575",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/user",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (!JSON.parse(pm.request.body.raw).session) {",
+									"    var res = pm.response.json()",
+									"",
+									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
+									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
+									"}"
+								],
+								"type": "text/javascript",
+								"id": "28c61493-95fa-4ee4-a9dc-381387934757"
+							}
+						}
+					],
+					"id": "34fba89f-66b3-4807-8a18-9339bdd5bf25",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session\": true,\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/user/login",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (!JSON.parse(pm.request.body.raw).session) {",
+									"    var res = pm.response.json()",
+									"",
+									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
+									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
+									"}"
+								],
+								"type": "text/javascript",
+								"id": "88c6a85f-0f8d-4082-b813-71c937632fe9"
+							}
+						}
+					],
+					"id": "41d0dd1f-be88-4b8c-8b97-25d0ffd64353",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session\": true,\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/user/refresh-token",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ResetPasswordRequest",
+					"id": "e5eb92f5-8067-4fc3-bfa9-dbea795f3d92",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/user/reset-password-request",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user",
+								"reset-password-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ResetPassword",
+					"id": "19877e84-fc48-43f9-b17e-38d4934693a8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recovery_token\": \"{{recovery_token}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/user/reset-password",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"id": "8c586fac-3dc8-49bd-a5af-09a2339062d8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/user/me",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "3f9e62a3-d801-48a7-aabf-5de206af5622"
+		},
+		{
+			"name": "Health",
+			"id": "7de2d54d-1955-41f0-804b-d9d62a3f0320",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/health",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"let url = pm.collectionVariables.get(\"base\")",
+					"let refresh_token = pm.collectionVariables.get(\"refresh_token\")",
+					"",
+					"if (url && refresh_token) {",
+					"    pm.sendRequest(",
+					"        {",
+					"            url: `${url}/user/refresh-token`,",
+					"            method: \"POST\",",
+					"            body: {",
+					"                mode: \"raw\",",
+					"                raw: {",
+					"                    refresh_token",
+					"                }",
+					"            }",
+					"        }, ",
+					"        (err, res) => {",
+					"            pm.collectionVariables.set(\"token\", res.json()[\"token\"])",
+					"            pm.collectionVariables.set(\"refresh_token\", res.json()[\"refresh_token\"])",
+					"        }",
+					"    );",
+					"}"
+				],
+				"id": "b8252262-cde3-4e2d-bb30-2a697a639a1e"
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "8aee3798-33ce-4be1-b8f9-2f374acf878a"
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0a4c3c8c-8c0b-4cab-ab13-126dd8f56971",
+			"key": "base",
+			"value": "http://localhost:8080"
+		},
+		{
+			"id": "03e4a0d5-eac9-4000-a94d-02f6acf1e944",
+			"key": "email",
+			"value": ""
+		},
+		{
+			"id": "f7a79532-113b-487b-8297-9d3b76719c9f",
+			"key": "password",
+			"value": ""
+		},
+		{
+			"id": "69412e78-3077-4531-b385-bd8bb854996d",
+			"key": "token",
+			"value": ""
+		},
+		{
+			"id": "ea2e3786-8617-4f1e-bcd9-96379a8bcf9d",
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"id": "a239d5ca-87b0-4217-b093-ea2b8d3fb373",
+			"key": "recovery_token",
+			"value": ""
+		}
+	]
+}

@@ -1,0 +1,54 @@
+openapi: '3.1.0'
+info:
+  title: Go API
+  description: Go API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+    description: プロダクション API
+  - url: http://{host}:{port}
+    description: 開発用
+    variables:
+      host:
+        default: localhost
+      port:
+        default: '8080'
+paths:
+  /health:
+    get:
+      summary: ヘルスチェック
+      description: サーバーが応答可能な状態かを確認できます。
+      responses:
+        '200':
+          description: サーバーは正常に動作しています
+  /users:
+    post:
+      summary: ユーザー作成
+      description: ユーザーを作成します
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: {{email}}
+                password:
+                  type: string
+                  description: パスワード
+                  example: {{password}}
+                password_confirm:
+                    type: string
+                    description: パスワード確認
+                    example: {{password}}
+      responses:
+          '201':
+            description: ユーザーが作成されました
+          '400':
+            description: リクエストが不正です
+          '500':
+            description: サーバーでエラーが発生しました
