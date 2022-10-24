@@ -1,6 +1,6 @@
 module go-gin-ddd
 
-go 1.18
+go 1.19
 
 require (
 	cloud.google.com/go/storage v1.18.0
