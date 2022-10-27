@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"cloud.google.com/go/storage"
+	"go-gin-ddd/driver"
 	"google.golang.org/api/iterator"
 
 	"go-gin-ddd/config"
-	"go-gin-ddd/driver/gcp"
 )
 
 func Test_gcs_GetSignedUrl(t *testing.T) {
@@ -87,7 +87,7 @@ func Test_gcs_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			objects := gcp.GcsClient().Bucket(config.Env.Gcp.Bucket).Objects(ctx, &storage.Query{
+			objects := driver.GcsClient().Bucket(config.Env.Gcp.Bucket).Objects(ctx, &storage.Query{
 				Prefix: "test/",
 			})
 

@@ -11,17 +11,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
-	mysqlRepository "go-gin-ddd/infrastructure/mysql"
+	httpController "go-gin-ddd/adapter/controller/http"
+	"go-gin-ddd/adapter/gateway/mail"
+	mysqlRepository "go-gin-ddd/adapter/gateway/mysql"
+	"go-gin-ddd/adapter/presenter"
+	"go-gin-ddd/driver"
+	"go-gin-ddd/packages/log"
+	"go-gin-ddd/usecase"
 
 	"go-gin-ddd/packages/http/middleware"
 	"go-gin-ddd/packages/http/router"
 
 	"go-gin-ddd/config"
-	httpController "go-gin-ddd/controller/http"
-	"go-gin-ddd/driver/rdb"
-	"go-gin-ddd/infrastructure/email"
-	"go-gin-ddd/infrastructure/log"
-	"go-gin-ddd/usecase"
 )
 
 func Execute() {
@@ -52,20 +53,21 @@ func Execute() {
 	// cookie
 	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
 
-	r := router.New(engine, rdb.Get)
+	r := router.New(engine, driver.GetRDB)
 
 	// dependencies injection
-	// ----- infrastructure -----
-	emailDriver := email.New()
+	// ----- gateway -----
+	mailAdapter := mail.New()
 
 	// mysql
 	userRepository := mysqlRepository.NewUser()
 
 	// ----- usecase -----
-	userUseCase := usecase.NewUser(emailDriver, userRepository)
+	userInputFactory := usecase.NewUserInputFactory(userRepository, mailAdapter)
+	userOutputFactory := presenter.NewUserOutputFactory()
 
 	// ----- controller -----
-	httpController.NewUser(r, userUseCase)
+	httpController.NewUser(r, userInputFactory, userOutputFactory)
 
 	logger.Info("Succeeded in dependencies injection.")
 
@@ -92,7 +94,7 @@ func Execute() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatalf("Server forced to shutdown: %+v", err)
+		logger.Fatal(fmt.Sprintf("Server forced to shutdown: %+v", err))
 	}
 
 	logger.Info("Server exiting")

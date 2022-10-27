@@ -8,9 +8,9 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"go-gin-ddd/driver"
 
 	"go-gin-ddd/config"
-	"go-gin-ddd/driver/gcp"
 )
 
 type IGcs interface {
@@ -44,8 +44,8 @@ func (gcs) GetSignedURL(dir string, public bool) (*SignedURL, error) {
 	}
 
 	url, err := storage.SignedURL(config.Env.Gcp.Bucket, keyString, &storage.SignedURLOptions{
-		GoogleAccessID: gcp.Conf().Email,
-		PrivateKey:     gcp.Conf().PrivateKey,
+		GoogleAccessID: driver.GcpEmail(),
+		PrivateKey:     driver.GcpPrivateKey(),
 		Method:         http.MethodPut,
 		Expires:        time.Now().Add(config.SignedURLDuration),
 		Headers:        headers,
@@ -64,5 +64,5 @@ func (gcs) Delete(key string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	return gcp.GcsClient().Bucket(config.Env.Gcp.Bucket).Object(key).Delete(ctx)
+	return driver.GcsClient().Bucket(config.Env.Gcp.Bucket).Object(key).Delete(ctx)
 }

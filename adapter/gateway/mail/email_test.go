@@ -1,11 +1,15 @@
-package email
+package mail
 
-import "testing"
+import (
+	"testing"
+
+	"go-gin-ddd/resource/mail_body"
+)
 
 func Test_email_Send(t *testing.T) {
 	type args struct {
 		to   string
-		body Body
+		body mail_body.MailBody
 	}
 	tests := []struct {
 		name    string
@@ -16,7 +20,7 @@ func Test_email_Send(t *testing.T) {
 			name: "default",
 			args: args{
 				to: "test@test.com",
-				body: DefaultBody{
+				body: mail_body.Default{
 					Title: "テスト",
 					Body:  "メール送信テスト",
 				},
