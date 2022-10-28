@@ -35,11 +35,6 @@ type ILogger interface {
 	Warn(msg string, fields ...zap.Field)
 	Error(msg string, fields ...zap.Field)
 	Fatal(msg string, fields ...zap.Field)
-	Debugf(template string, args ...interface{})
-	Infof(template string, args ...interface{})
-	Warnf(template string, args ...interface{})
-	Errorf(template string, args ...interface{})
-	Fatalf(template string, args ...interface{})
 }
 
 type logger struct {
@@ -80,26 +75,4 @@ func (l *logger) Error(msg string, fields ...zap.Field) {
 
 func (l *logger) Fatal(msg string, fields ...zap.Field) {
 	l.zapLog.Fatal(msg, fields...)
-}
-
-// format
-
-func (l *logger) Debugf(template string, args ...interface{}) {
-	l.zapLog.Sugar().Debugf(template, args...)
-}
-
-func (l *logger) Infof(template string, args ...interface{}) {
-	l.zapLog.Sugar().Infof(template, args...)
-}
-
-func (l *logger) Warnf(template string, args ...interface{}) {
-	l.zapLog.Sugar().Warnf(template, args...)
-}
-
-func (l *logger) Errorf(template string, args ...interface{}) {
-	l.zapLog.Sugar().Errorf(template, args...)
-}
-
-func (l *logger) Fatalf(template string, args ...interface{}) {
-	l.zapLog.Sugar().Fatalf(template, args...)
 }

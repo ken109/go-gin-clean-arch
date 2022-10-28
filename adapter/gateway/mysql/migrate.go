@@ -2,11 +2,11 @@ package mysql
 
 import (
 	"go-gin-ddd/domain"
-	"go-gin-ddd/driver/rdb"
+	"go-gin-ddd/driver"
 )
 
 func init() {
-	err := rdb.Get().AutoMigrate(
+	err := driver.GetRDB().AutoMigrate(
 		&domain.User{},
 	)
 	if err != nil {

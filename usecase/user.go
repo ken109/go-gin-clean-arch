@@ -5,32 +5,70 @@ import (
 
 	jwt "github.com/ken109/gin-jwt"
 	"go-gin-ddd/domain"
+	"go-gin-ddd/resource/mail_body"
 
 	"go-gin-ddd/packages/context"
 	"go-gin-ddd/packages/errors"
 
 	"go-gin-ddd/config"
-	emailInfra "go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 )
 
-type user struct {
-	email    emailInfra.IEmail
-	userRepo domain.UserRepository
+type UserInputPort interface {
+	Create(ctx context.Context, req *request.UserCreate) error
+
+	ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) error
+	ResetPassword(ctx context.Context, req *request.UserResetPassword) error
+	Login(ctx context.Context, req *request.UserLogin) error
+	RefreshToken(req *request.UserRefreshToken) error
+
+	GetByID(ctx context.Context, id uint) error
 }
 
-func NewUser(email emailInfra.IEmail, tr domain.UserRepository) domain.UserUsecase {
-	return &user{
-		email:    email,
-		userRepo: tr,
+type UserOutputPort interface {
+	Create(id uint) error
+
+	ResetPasswordRequest(res *response.UserResetPasswordRequest) error
+	ResetPassword() error
+	Login(isSession bool, res *response.UserLogin) error
+	RefreshToken(isSession bool, res *response.UserLogin) error
+
+	GetByID(res *domain.User) error
+}
+
+type UserRepository interface {
+	Create(ctx context.Context, user *domain.User) (uint, error)
+	GetByID(ctx context.Context, id uint) (*domain.User, error)
+	GetByEmail(ctx context.Context, email string) (*domain.User, error)
+	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*domain.User, error)
+	Update(ctx context.Context, user *domain.User) error
+
+	EmailExists(ctx context.Context, email string) (bool, error)
+}
+
+type user struct {
+	outputPort UserOutputPort
+	userRepo   UserRepository
+	email      Mail
+}
+
+type UserInputFactory func(outputPort UserOutputPort) UserInputPort
+
+func NewUserInputFactory(tr UserRepository, email Mail) UserInputFactory {
+	return func(o UserOutputPort) UserInputPort {
+		return &user{
+			outputPort: o,
+			userRepo:   tr,
+			email:      email,
+		}
 	}
 }
 
-func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error) {
+func (u user) Create(ctx context.Context, req *request.UserCreate) error {
 	email, err := u.userRepo.EmailExists(ctx, req.Email)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	if email {
@@ -39,34 +77,31 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 
 	newUser, err := domain.NewUser(ctx, req)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	if ctx.IsInValid() {
-		return 0, ctx.ValidationError()
+		return ctx.ValidationError()
 	}
 
 	id, err := u.userRepo.Create(ctx, newUser)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return id, nil
+	return u.outputPort.Create(id)
 }
 
-func (u user) ResetPasswordRequest(
-	ctx context.Context,
-	req *request.UserResetPasswordRequest,
-) (*response.UserResetPasswordRequest, error) {
+func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) error {
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
 		switch v := err.(type) {
 		case *errors.Expected:
 			if !v.ChangeStatus(http.StatusNotFound, http.StatusOK) {
-				return nil, err
+				return err
 			}
 		default:
-			return nil, err
+			return err
 		}
 	}
 
@@ -74,7 +109,7 @@ func (u user) ResetPasswordRequest(
 
 	res.Duration, res.Expire, err = user.RecoveryToken.Generate()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = ctx.Transaction(
@@ -84,7 +119,7 @@ func (u user) ResetPasswordRequest(
 				return err
 			}
 
-			err = u.email.Send(user.Email, emailInfra.UserResetPasswordRequest{
+			err = u.email.Send(user.Email, mail_body.UserResetPasswordRequest{
 				URL:   config.Env.App.URL,
 				Token: user.RecoveryToken.String(),
 			})
@@ -97,10 +132,10 @@ func (u user) ResetPasswordRequest(
 	)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &res, nil
+	return u.outputPort.ResetPasswordRequest(&res)
 }
 
 func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword) error {
@@ -121,10 +156,10 @@ func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword)
 	return u.userRepo.Update(ctx, user)
 }
 
-func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error) {
+func (u user) Login(ctx context.Context, req *request.UserLogin) error {
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if user.Password.IsValid(req.Password) {
@@ -134,31 +169,35 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.User
 			"uid": user.ID,
 		})
 		if err != nil {
-			return nil, errors.NewUnexpected(err)
+			return errors.NewUnexpected(err)
 		}
-		return &res, nil
+		return u.outputPort.Login(req.Session, &res)
 	}
-	return nil, nil
+	return u.outputPort.Login(req.Session, nil)
 }
 
-func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
+func (u user) RefreshToken(req *request.UserRefreshToken) error {
 	var (
 		res response.UserLogin
 		ok  bool
 		err error
 	)
 
-	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.UserRealm, refreshToken)
+	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.UserRealm, req.RefreshToken)
 	if err != nil {
-		return nil, errors.NewUnexpected(err)
+		return errors.NewUnexpected(err)
 	}
 
 	if !ok {
-		return nil, nil
+		return nil
 	}
-	return &res, nil
+	return u.outputPort.RefreshToken(req.Session, &res)
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*domain.User, error) {
-	return u.userRepo.GetByID(ctx, id)
+func (u user) GetByID(ctx context.Context, id uint) error {
+	res, err := u.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	return u.outputPort.GetByID(res)
 }

@@ -1,4 +1,4 @@
-package email
+package mail_body
 
 import (
 	"bytes"
@@ -9,7 +9,13 @@ import (
 	"go-gin-ddd/packages/errors"
 )
 
-func htmlToPlain(body Body) (string, error) {
+type MailBody interface {
+	Subject() string
+	HTML() (string, error)
+	Plain() (string, error)
+}
+
+func htmlToPlain(body MailBody) (string, error) {
 	html, err := body.HTML()
 	if err != nil {
 		return "", err

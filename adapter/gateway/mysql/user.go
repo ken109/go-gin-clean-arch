@@ -3,13 +3,14 @@ package mysql
 import (
 	"go-gin-ddd/domain"
 	"go-gin-ddd/packages/context"
+	"go-gin-ddd/usecase"
 
 	"go-gin-ddd/domain/vobj"
 )
 
 type user struct{}
 
-func NewUser() domain.UserRepository {
+func NewUser() usecase.UserRepository {
 	return &user{}
 }
 

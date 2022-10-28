@@ -1,31 +1,23 @@
-package email
+package mail
 
 import (
 	_ "embed"
 	"strconv"
 
+	"go-gin-ddd/resource/mail_body"
+	"go-gin-ddd/usecase"
 	"gopkg.in/gomail.v2"
 
 	"go-gin-ddd/config"
 )
 
-type Body interface {
-	Subject() string
-	HTML() (string, error)
-	Plain() (string, error)
-}
-
-type IEmail interface {
-	Send(to string, body Body) error
-}
-
 type email struct{}
 
-func New() IEmail {
+func New() usecase.Mail {
 	return &email{}
 }
 
-func (e email) Send(to string, body Body) error {
+func (e email) Send(to string, body mail_body.MailBody) error {
 	m := gomail.NewMessage()
 
 	html, err := body.HTML()

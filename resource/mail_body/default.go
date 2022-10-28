@@ -1,12 +1,16 @@
-package email
+package mail_body
 
 import (
 	_ "embed"
 	"html/template"
 )
 
-//go:embed template/default.gohtml
-var defaultHTMLTemplateString string
+var defaultHTMLTemplateString = `<!DOCTYPE html>
+<div>
+    <h1>{{.Title}}</h1>
+    <p>{{.Body}}</p>
+</div>
+`
 var defaultHTMLTemplate *template.Template
 
 func init() {
@@ -17,19 +21,19 @@ func init() {
 	}
 }
 
-type DefaultBody struct {
+type Default struct {
 	Title string
 	Body  string
 }
 
-func (d DefaultBody) Subject() string {
+func (d Default) Subject() string {
 	return d.Title
 }
 
-func (d DefaultBody) HTML() (string, error) {
+func (d Default) HTML() (string, error) {
 	return setHTMLTemplate(defaultHTMLTemplate, d)
 }
 
-func (d DefaultBody) Plain() (string, error) {
+func (d Default) Plain() (string, error) {
 	return htmlToPlain(d)
 }

@@ -1,4 +1,4 @@
-package rdb
+package driver
 
 import (
 	"fmt"
@@ -35,6 +35,6 @@ func init() {
 	}
 }
 
-func Get() *gorm.DB {
+func GetRDB() *gorm.DB {
 	return db
 }
