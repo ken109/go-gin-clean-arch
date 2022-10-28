@@ -1,4 +1,4 @@
-module go-gin-ddd
+module go-gin-clean-arch
 
 go 1.19
 

@@ -6,8 +6,8 @@ import (
 
 	"github.com/iancoleman/strcase"
 
-	"go-gin-ddd/packages/util"
-	"go-gin-ddd/packages/validation"
+	"go-gin-clean-arch/packages/util"
+	"go-gin-clean-arch/packages/validation"
 
 	"github.com/go-playground/validator/v10"
 )

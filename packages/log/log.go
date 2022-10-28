@@ -55,8 +55,6 @@ func (l *logger) Sync() {
 	_ = l.zapLog.Sync()
 }
 
-// normal
-
 func (l *logger) Debug(msg string, fields ...zap.Field) {
 	l.zapLog.Debug(msg, fields...)
 }

@@ -1,11 +1,11 @@
 package mysql
 
 import (
-	"go-gin-ddd/domain"
-	"go-gin-ddd/packages/context"
-	"go-gin-ddd/usecase"
+	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/usecase"
 
-	"go-gin-ddd/domain/vobj"
+	"go-gin-clean-arch/domain/vobj"
 )
 
 type user struct{}

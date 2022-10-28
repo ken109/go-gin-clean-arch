@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/errors"
 	"go.uber.org/zap"
 )
 

@@ -11,22 +11,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
-	httpController "go-gin-ddd/adapter/controller/http"
-	"go-gin-ddd/adapter/gateway/mail"
-	mysqlRepository "go-gin-ddd/adapter/gateway/mysql"
-	"go-gin-ddd/adapter/presenter"
-	"go-gin-ddd/driver"
-	"go-gin-ddd/packages/log"
-	"go-gin-ddd/usecase"
+	httpController "go-gin-clean-arch/adapter/controller/http"
+	"go-gin-clean-arch/adapter/gateway/mail"
+	mysqlRepository "go-gin-clean-arch/adapter/gateway/mysql"
+	"go-gin-clean-arch/adapter/presenter"
+	"go-gin-clean-arch/driver"
+	"go-gin-clean-arch/packages/log"
+	"go-gin-clean-arch/usecase"
 
-	"go-gin-ddd/packages/http/middleware"
-	"go-gin-ddd/packages/http/router"
+	"go-gin-clean-arch/packages/http/middleware"
+	"go-gin-clean-arch/packages/http/router"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 func Execute() {
 	logger := log.Logger()
+	defer logger.Sync()
 
 	err := jwt.SetUp(
 		jwt.Option{

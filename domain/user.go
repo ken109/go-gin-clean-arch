@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"go-gin-ddd/domain/vobj"
-	"go-gin-ddd/packages/context"
-	"go-gin-ddd/resource/request"
+	"go-gin-clean-arch/domain/vobj"
+	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/resource/request"
 )
 
 type User struct {

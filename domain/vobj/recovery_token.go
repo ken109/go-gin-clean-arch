@@ -9,9 +9,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/errors"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 type RecoveryToken string

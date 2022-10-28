@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"go-gin-ddd/domain"
-	"go-gin-ddd/driver"
+	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/driver"
 )
 
 func init() {

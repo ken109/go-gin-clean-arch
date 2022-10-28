@@ -16,8 +16,8 @@ services:
       - '33065:3306'
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: go-gin-ddd-ideal
-      MYSQL_USER: go-gin-ddd-ideal
+      MYSQL_DATABASE: go-gin-clean-arch
+      MYSQL_USER: go-gin-clean-arch
       MYSQL_PASSWORD: password
       TZ: 'Asia/Tokyo'
     volumes:

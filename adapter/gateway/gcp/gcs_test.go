@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"cloud.google.com/go/storage"
-	"go-gin-ddd/driver"
+	"go-gin-clean-arch/driver"
 	"google.golang.org/api/iterator"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 func Test_gcs_GetSignedUrl(t *testing.T) {

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"go-gin-ddd/packages/context"
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/packages/errors"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

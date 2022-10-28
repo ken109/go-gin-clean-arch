@@ -1,6 +1,6 @@
 package api
 
-import "go-gin-ddd/packages/validation"
+import "go-gin-clean-arch/packages/validation"
 
 func init() {
 	validation.RegisterFieldTrans(map[string]string{

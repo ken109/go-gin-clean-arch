@@ -2,15 +2,15 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-gin-ddd/adapter/presenter"
-	"go-gin-ddd/config"
-	"go-gin-ddd/packages/http/middleware"
-	"go-gin-ddd/packages/http/router"
-	"go-gin-ddd/usecase"
+	"go-gin-clean-arch/adapter/presenter"
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/http/middleware"
+	"go-gin-clean-arch/packages/http/router"
+	"go-gin-clean-arch/usecase"
 
-	"go-gin-ddd/packages/context"
+	"go-gin-clean-arch/packages/context"
 
-	"go-gin-ddd/resource/request"
+	"go-gin-clean-arch/resource/request"
 )
 
 type user struct {

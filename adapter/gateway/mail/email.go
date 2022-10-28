@@ -4,11 +4,11 @@ import (
 	_ "embed"
 	"strconv"
 
-	"go-gin-ddd/resource/mail_body"
-	"go-gin-ddd/usecase"
+	"go-gin-clean-arch/resource/mail_body"
+	"go-gin-clean-arch/usecase"
 	"gopkg.in/gomail.v2"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 type email struct{}

@@ -6,7 +6,7 @@ import (
 
 	"jaytaylor.com/html2text"
 
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/errors"
 )
 
 type MailBody interface {

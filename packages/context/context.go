@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/errors"
 )
 
 type Context interface {

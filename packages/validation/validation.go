@@ -7,7 +7,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	jaTranslations "github.com/go-playground/validator/v10/translations/ja"
-	"go-gin-ddd/packages/util"
+	"go-gin-clean-arch/packages/util"
 )
 
 var (

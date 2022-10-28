@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"go-gin-ddd/config"
-	"go-gin-ddd/domain"
-	"go-gin-ddd/resource/response"
-	"go-gin-ddd/usecase"
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/resource/response"
+	"go-gin-clean-arch/usecase"
 )
 
 type user struct {

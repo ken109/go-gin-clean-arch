@@ -3,7 +3,7 @@ package mail
 import (
 	"testing"
 
-	"go-gin-ddd/resource/mail_body"
+	"go-gin-clean-arch/resource/mail_body"
 )
 
 func Test_email_Send(t *testing.T) {

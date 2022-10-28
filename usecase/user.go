@@ -4,15 +4,15 @@ import (
 	"net/http"
 
 	jwt "github.com/ken109/gin-jwt"
-	"go-gin-ddd/domain"
-	"go-gin-ddd/resource/mail_body"
+	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/resource/mail_body"
 
-	"go-gin-ddd/packages/context"
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/packages/errors"
 
-	"go-gin-ddd/config"
-	"go-gin-ddd/resource/request"
-	"go-gin-ddd/resource/response"
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/resource/request"
+	"go-gin-clean-arch/resource/response"
 )
 
 type UserInputPort interface {

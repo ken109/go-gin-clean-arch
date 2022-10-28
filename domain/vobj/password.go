@@ -8,10 +8,10 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"go-gin-ddd/packages/context"
-	"go-gin-ddd/packages/errors"
+	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/packages/errors"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 type Password string

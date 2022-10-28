@@ -8,9 +8,9 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
-	"go-gin-ddd/driver"
+	"go-gin-clean-arch/driver"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 type IGcs interface {

@@ -6,7 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"go-gin-ddd/config"
+	"go-gin-clean-arch/config"
 )
 
 var db *gorm.DB
