@@ -61,13 +61,13 @@ func main() {
 
 	// dependencies injection
 	// ----- gateway -----
-	mailAdapter := mail.New()
+	mailSender := mail.NewSender()
 
 	// mysql
 	userRepository := mysqlRepository.NewUser()
 
 	// ----- usecase -----
-	userInputFactory := usecase.NewUserInputFactory(userRepository, mailAdapter)
+	userInputFactory := usecase.NewUserInputFactory(userRepository, mailSender)
 	userOutputFactory := presenter.NewUserOutputFactory()
 
 	// ----- controller -----

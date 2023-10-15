@@ -5,6 +5,7 @@ import (
 
 	jwt "github.com/ken109/gin-jwt"
 	"github.com/rs/xid"
+	"go-gin-clean-arch/adapter/gateway/mail"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/resource/mail_body"
 
@@ -51,12 +52,12 @@ type UserRepository interface {
 type user struct {
 	outputPort UserOutputPort
 	userRepo   UserRepository
-	email      Mail
+	email      mail.Sender
 }
 
 type UserInputFactory func(outputPort UserOutputPort) UserInputPort
 
-func NewUserInputFactory(tr UserRepository, email Mail) UserInputFactory {
+func NewUserInputFactory(tr UserRepository, email mail.Sender) UserInputFactory {
 	return func(o UserOutputPort) UserInputPort {
 		return &user{
 			outputPort: o,

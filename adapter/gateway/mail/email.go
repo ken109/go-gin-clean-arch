@@ -5,15 +5,18 @@ import (
 	"strconv"
 
 	"go-gin-clean-arch/resource/mail_body"
-	"go-gin-clean-arch/usecase"
 	"gopkg.in/gomail.v2"
 
 	"go-gin-clean-arch/config"
 )
 
+type Sender interface {
+	Send(to string, body mail_body.MailBody) error
+}
+
 type email struct{}
 
-func New() usecase.Mail {
+func NewSender() Sender {
 	return &email{}
 }
 
