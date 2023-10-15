@@ -40,7 +40,7 @@ func Cors(option *CorsOption) gin.HandlerFunc {
 					return false
 				}
 			},
-			AllowHeaders:     []string{"Origin", "Authorization", "Content-Length", "Content-Type", "X-Request-Id"},
+			AllowHeaders:     []string{"Origin", "Authorization", "Content-Length", "Content-Type", "X-Request-ID"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
 			AllowCredentials: true,
 			MaxAge:           maxAge,

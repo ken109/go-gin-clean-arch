@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -114,12 +115,12 @@ type ErrorResponse struct {
 	err    Error
 }
 
-func (r ErrorResponse) Do(c *gin.Context, requestID string) {
+func (r ErrorResponse) Do(c *gin.Context) {
 	c.PureJSON(r.status, struct {
 		RequestID string `json:"request_id"`
 		Error
 	}{
-		RequestID: requestID,
+		RequestID: requestid.Get(c),
 		Error:     r.err,
 	})
 }

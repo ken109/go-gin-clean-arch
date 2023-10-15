@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/rs/xid"
 	"gorm.io/gorm"
 
@@ -12,7 +11,6 @@ import (
 )
 
 type Context interface {
-	RequestID() string
 	RequestContext() context.Context
 	Authenticated() bool
 	UID() xid.ID
@@ -27,7 +25,6 @@ type Context interface {
 }
 
 type ctx struct {
-	requestID      string
 	requestContext context.Context
 	validationErr  *errors.Error
 	getDB          func() *gorm.DB
@@ -36,11 +33,6 @@ type ctx struct {
 }
 
 func New(c *gin.Context, getDB func() *gorm.DB) Context {
-	requestID := c.GetHeader("X-Request-Id")
-	if requestID == "" {
-		requestID = uuid.New().String()
-	}
-
 	var uid xid.ID
 	claimsInterface, ok := c.Get("claims")
 	if ok {
@@ -50,16 +42,11 @@ func New(c *gin.Context, getDB func() *gorm.DB) Context {
 	}
 
 	return &ctx{
-		requestID:      requestID,
 		requestContext: c.Request.Context(),
 		validationErr:  errors.NewValidation(),
 		getDB:          getDB,
 		uid:            uid,
 	}
-}
-
-func (c *ctx) RequestID() string {
-	return c.requestID
 }
 
 func (c *ctx) RequestContext() context.Context {

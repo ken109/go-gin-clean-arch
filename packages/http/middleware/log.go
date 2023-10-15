@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	"go-gin-clean-arch/packages/errors"
 	"go.uber.org/zap"
@@ -35,7 +36,7 @@ func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 		var (
 			logFunc = logger.Info
 			fields  = []zap.Field{
-				zap.String("request-id", c.Writer.Header().Get("X-Request-Id")),
+				zap.String("request-id", requestid.Get(c)),
 				zap.Int("status", c.Writer.Status()),
 				zap.String("method", c.Request.Method),
 				zap.String("path", path),
@@ -107,7 +108,7 @@ func RecoveryWithLog(logger *zap.Logger, stack bool) gin.HandlerFunc {
 					)
 				}
 
-				errors.NewUnexpected(fmt.Errorf("%+v", err)).Response().Do(c, c.Writer.Header().Get("X-Request-Id"))
+				errors.NewUnexpected(fmt.Errorf("%+v", err)).Response().Do(c)
 			}
 		}()
 		c.Next()

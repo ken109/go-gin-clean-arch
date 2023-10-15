@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
 	httpController "go-gin-clean-arch/adapter/controller/http"
@@ -51,6 +52,7 @@ func main() {
 	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// middlewares
+	engine.Use(requestid.New())
 	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
 	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
 

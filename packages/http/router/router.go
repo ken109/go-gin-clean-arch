@@ -64,16 +64,14 @@ func (r *Router) wrapperFunc(handlerFunc HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := context.New(c, r.getDB)
 
-		c.Writer.Header().Add("X-Request-Id", ctx.RequestID())
-
 		err := handlerFunc(ctx, c)
 
 		if err != nil {
 			switch v := err.(type) {
 			case *errors.Error:
-				v.Response().Do(c, ctx.RequestID())
+				v.Response().Do(c)
 			default:
-				errors.NewUnexpected(v).Response().Do(c, ctx.RequestID())
+				errors.NewUnexpected(v).Response().Do(c)
 			}
 
 			_ = c.Error(err)
