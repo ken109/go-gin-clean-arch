@@ -32,7 +32,7 @@ func TestValidation_Validate(t *testing.T) {
 				Profile: Profile{Age: 0},
 			}},
 			wantInvalid: true,
-			wantError:   "validation error: {\"age\":[\"ageは必須フィールドです\"],\"email\":[\"メールアドレスは必須フィールドです\"]}",
+			wantError:   "validation error: {\"email\":[\"メールアドレスは必須フィールドです\"],\"profile.age\":[\"年齢は必須フィールドです\"]}",
 		},
 	}
 	for _, tt := range tests {
