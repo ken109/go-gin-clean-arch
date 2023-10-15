@@ -1,4 +1,4 @@
-package mail_body
+package mailbody
 
 import "fmt"
 

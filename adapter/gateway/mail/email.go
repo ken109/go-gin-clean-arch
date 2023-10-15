@@ -4,14 +4,14 @@ import (
 	_ "embed"
 	"strconv"
 
-	"go-gin-clean-arch/resource/mail_body"
+	"go-gin-clean-arch/resource/mailbody"
 	"gopkg.in/gomail.v2"
 
 	"go-gin-clean-arch/config"
 )
 
 type Sender interface {
-	Send(to string, body mail_body.MailBody) error
+	Send(to string, body mailbody.MailBody) error
 }
 
 type email struct{}
@@ -20,7 +20,7 @@ func NewSender() Sender {
 	return &email{}
 }
 
-func (e email) Send(to string, body mail_body.MailBody) error {
+func (e email) Send(to string, body mailbody.MailBody) error {
 	m := gomail.NewMessage()
 
 	html, err := body.HTML()

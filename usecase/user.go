@@ -7,7 +7,7 @@ import (
 	"github.com/rs/xid"
 	"go-gin-clean-arch/adapter/gateway/mail"
 	"go-gin-clean-arch/domain"
-	"go-gin-clean-arch/resource/mail_body"
+	"go-gin-clean-arch/resource/mailbody"
 
 	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/packages/errors"
@@ -121,7 +121,7 @@ func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPa
 				return err
 			}
 
-			err = u.email.Send(user.Email, mail_body.UserResetPasswordRequest{
+			err = u.email.Send(user.Email, mailbody.UserResetPasswordRequest{
 				URL:   config.Env.App.URL,
 				Token: user.RecoveryToken.String(),
 			})
