@@ -6,13 +6,11 @@ import (
 	jwt "github.com/ken109/gin-jwt"
 	"github.com/rs/xid"
 	"go-gin-clean-arch/adapter/gateway/mail"
+	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
-	"go-gin-clean-arch/resource/mailbody"
-
 	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/packages/errors"
-
-	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/resource/mailbody"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/resource/response"
 )

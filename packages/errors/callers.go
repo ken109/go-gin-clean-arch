@@ -10,10 +10,12 @@ type Frame uintptr
 
 func (f Frame) pc() uintptr { return uintptr(f) - 1 }
 
+const unknown = "unknown"
+
 func (f Frame) file() string {
 	fn := runtime.FuncForPC(f.pc())
 	if fn == nil {
-		return "unknown"
+		return unknown
 	}
 	file, _ := fn.FileLine(f.pc())
 	return file

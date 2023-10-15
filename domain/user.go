@@ -15,7 +15,7 @@ type User struct {
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
-	var user = User{
+	user := User{
 		Email:         dto.Email,
 		RecoveryToken: vobj.NewRecoveryToken(""),
 	}

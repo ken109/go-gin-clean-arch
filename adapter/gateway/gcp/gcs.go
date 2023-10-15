@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/google/uuid"
-	"go-gin-clean-arch/driver"
 
+	"github.com/google/uuid"
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/driver"
 )
 
 type IGcs interface {

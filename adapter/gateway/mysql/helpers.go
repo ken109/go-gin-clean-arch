@@ -1,9 +1,8 @@
 package mysql
 
 import (
-	"gorm.io/gorm"
-
 	"go-gin-clean-arch/packages/errors"
+	"gorm.io/gorm"
 )
 
 func dbError(err error) error {

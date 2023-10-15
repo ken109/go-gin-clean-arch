@@ -65,7 +65,6 @@ func (r *Router) wrapperFunc(handlerFunc HandlerFunc) gin.HandlerFunc {
 		ctx := context.New(c, r.getDB)
 
 		err := handlerFunc(ctx, c)
-
 		if err != nil {
 			switch v := err.(type) {
 			case *errors.Error:

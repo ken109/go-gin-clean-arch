@@ -29,7 +29,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /users/login:
     post:
       tags:
@@ -48,7 +48,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /users/refresh-token:
     post:
       security:
@@ -68,7 +68,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /users/reset-password-request:
     patch:
       security:
@@ -87,7 +87,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /users/reset-password:
     patch:
       security:
@@ -108,7 +108,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /users/me:
     get:
       security:
@@ -120,7 +120,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
   /health:
     get:
       tags:
@@ -130,7 +130,7 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
+            application/json: { }
 
 
 components:

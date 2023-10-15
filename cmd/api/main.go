@@ -13,6 +13,7 @@ import (
 	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	jwt "github.com/ken109/gin-jwt"
+
 	httpController "go-gin-clean-arch/adapter/controller/http"
 	"go-gin-clean-arch/adapter/gateway/mail"
 	mysqlRepository "go-gin-clean-arch/adapter/gateway/mysql"
@@ -79,8 +80,9 @@ func main() {
 
 	// serve
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", config.Env.Port),
-		Handler: engine,
+		Addr:              fmt.Sprintf(":%s", config.Env.Port),
+		Handler:           engine,
+		ReadHeaderTimeout: time.Second * 20,
 	}
 
 	go func() {

@@ -4,9 +4,7 @@ import (
 	"cloud.google.com/go/storage"
 )
 
-var (
-	client *storage.Client
-)
+var client *storage.Client
 
 // 現状GCSを利用する実装がないのでコメントアウト
 // func init() {

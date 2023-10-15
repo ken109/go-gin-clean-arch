@@ -4,9 +4,7 @@ import (
 	"golang.org/x/oauth2/jwt"
 )
 
-var (
-	conf *jwt.Config
-)
+var conf *jwt.Config
 
 // 現状GCPを利用する実装がないのでコメントアウト
 // func init() {

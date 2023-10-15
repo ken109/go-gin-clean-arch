@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"regexp"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
-
 	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/packages/validation"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type Validation struct {

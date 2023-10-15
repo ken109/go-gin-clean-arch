@@ -5,9 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
-	"gorm.io/gorm"
-
 	"go-gin-clean-arch/packages/errors"
+	"gorm.io/gorm"
 )
 
 type Context interface {

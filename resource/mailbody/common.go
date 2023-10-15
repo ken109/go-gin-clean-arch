@@ -4,9 +4,9 @@ import (
 	"bytes"
 	templateHtml "html/template"
 
-	"jaytaylor.com/html2text"
-
 	"go-gin-clean-arch/packages/errors"
+
+	"jaytaylor.com/html2text"
 )
 
 type MailBody interface {

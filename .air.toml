@@ -2,7 +2,7 @@ root = "/project_root"
 tmp_dir = "tmp"
 
 [build]
-  bin = "tmp/app"
-  cmd = "CGO_ENABLED=0 go build -o tmp/app ./cmd/api/main.go"
-  include_ext = ["go", "tpl", "tmpl", "html"]
-  exclude_dir = ["doc"]
+bin = "tmp/app"
+cmd = "CGO_ENABLED=0 go build -o tmp/app ./cmd/api/main.go"
+include_ext = ["go", "tpl", "tmpl", "html"]
+exclude_dir = ["doc"]

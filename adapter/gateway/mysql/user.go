@@ -2,11 +2,11 @@ package mysql
 
 import (
 	"github.com/rs/xid"
+
 	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/domain/vobj"
 	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/usecase"
-
-	"go-gin-clean-arch/domain/vobj"
 )
 
 type user struct{}

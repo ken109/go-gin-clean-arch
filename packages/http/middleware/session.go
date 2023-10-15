@@ -31,7 +31,7 @@ func Session(name []string, secret string, option *SessionOption) gin.HandlerFun
 		sameSite = http.SameSiteLaxMode
 	}
 
-	var maxAge = time.Hour * 24 * 365
+	maxAge := time.Hour * 24 * 365
 
 	if option != nil {
 		maxAge = option.MaxAge

@@ -6,18 +6,16 @@ import (
 	"time"
 
 	crypto "github.com/noknow-hub/go_crypto"
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-
-	"go-gin-clean-arch/packages/errors"
-
-	"go-gin-clean-arch/config"
 )
 
 type RecoveryToken string
 
 func NewRecoveryToken(recoveryToken string) *RecoveryToken {
-	var value = RecoveryToken(recoveryToken)
+	value := RecoveryToken(recoveryToken)
 	return &value
 }
 

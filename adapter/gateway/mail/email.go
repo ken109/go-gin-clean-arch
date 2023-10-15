@@ -4,10 +4,9 @@ import (
 	_ "embed"
 	"strconv"
 
+	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/resource/mailbody"
 	"gopkg.in/gomail.v2"
-
-	"go-gin-clean-arch/config"
 )
 
 type Sender interface {
