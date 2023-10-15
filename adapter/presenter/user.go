@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/xid"
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/resource/response"
@@ -23,7 +24,7 @@ func NewUserOutputFactory() UserOutputFactory {
 	}
 }
 
-func (u *user) Create(id uint) error {
+func (u *user) Create(id xid.ID) error {
 	u.c.JSON(http.StatusCreated, id)
 	return nil
 }

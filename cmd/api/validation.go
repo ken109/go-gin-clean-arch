@@ -1,4 +1,4 @@
-package api
+package main
 
 import "go-gin-clean-arch/packages/validation"
 

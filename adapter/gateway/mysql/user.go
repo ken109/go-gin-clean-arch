@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"github.com/rs/xid"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/usecase"
@@ -14,16 +15,17 @@ func NewUser() usecase.UserRepository {
 	return &user{}
 }
 
-func (u user) Create(ctx context.Context, user *domain.User) (uint, error) {
+func (u user) Create(ctx context.Context, user *domain.User) (xid.ID, error) {
 	db := ctx.DB()
 
 	if err := db.Create(user).Error; err != nil {
-		return 0, dbError(err)
+		return xid.NilID(), dbError(err)
 	}
+
 	return user.ID, nil
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*domain.User, error) {
+func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
 	db := ctx.DB()
 
 	var user domain.User

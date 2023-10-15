@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	jwt "github.com/ken109/gin-jwt"
+	"github.com/rs/xid"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/resource/mail_body"
 
@@ -23,11 +24,11 @@ type UserInputPort interface {
 	Login(ctx context.Context, req *request.UserLogin) error
 	RefreshToken(req *request.UserRefreshToken) error
 
-	GetByID(ctx context.Context, id uint) error
+	GetByID(ctx context.Context, id xid.ID) error
 }
 
 type UserOutputPort interface {
-	Create(id uint) error
+	Create(id xid.ID) error
 
 	ResetPasswordRequest(res *response.UserResetPasswordRequest) error
 	ResetPassword() error
@@ -38,8 +39,8 @@ type UserOutputPort interface {
 }
 
 type UserRepository interface {
-	Create(ctx context.Context, user *domain.User) (uint, error)
-	GetByID(ctx context.Context, id uint) (*domain.User, error)
+	Create(ctx context.Context, user *domain.User) (xid.ID, error)
+	GetByID(ctx context.Context, id xid.ID) (*domain.User, error)
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*domain.User, error)
 	Update(ctx context.Context, user *domain.User) error
@@ -194,7 +195,7 @@ func (u user) RefreshToken(req *request.UserRefreshToken) error {
 	return u.outputPort.RefreshToken(req.Session, &res)
 }
 
-func (u user) GetByID(ctx context.Context, id uint) error {
+func (u user) GetByID(ctx context.Context, id xid.ID) error {
 	res, err := u.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return err

@@ -1,8 +1,11 @@
 package context
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/rs/xid"
 	"gorm.io/gorm"
 
 	"go-gin-clean-arch/packages/errors"
@@ -10,8 +13,9 @@ import (
 
 type Context interface {
 	RequestID() string
+	RequestContext() context.Context
 	Authenticated() bool
-	UID() uint
+	UID() xid.ID
 
 	Validate(request interface{}) (invalid bool)
 	FieldError(fieldName string, message string)
@@ -23,11 +27,12 @@ type Context interface {
 }
 
 type ctx struct {
-	id    string
-	verr  *errors.Error
-	getDB func() *gorm.DB
-	db    *gorm.DB
-	uid   uint
+	requestID      string
+	requestContext context.Context
+	validationErr  *errors.Error
+	getDB          func() *gorm.DB
+	db             *gorm.DB
+	uid            xid.ID
 }
 
 func New(c *gin.Context, getDB func() *gorm.DB) Context {
@@ -36,30 +41,35 @@ func New(c *gin.Context, getDB func() *gorm.DB) Context {
 		requestID = uuid.New().String()
 	}
 
-	var uid uint
+	var uid xid.ID
 	claimsInterface, ok := c.Get("claims")
 	if ok {
 		if uidInterface, ok := claimsInterface.(map[string]interface{})["uid"]; ok {
-			uid = uint(uidInterface.(float64))
+			uid, _ = xid.FromString(uidInterface.(string))
 		}
 	}
 
 	return &ctx{
-		id:    requestID,
-		verr:  errors.NewValidation(),
-		getDB: getDB,
-		uid:   uid,
+		requestID:      requestID,
+		requestContext: c.Request.Context(),
+		validationErr:  errors.NewValidation(),
+		getDB:          getDB,
+		uid:            uid,
 	}
 }
 
-func (c ctx) RequestID() string {
-	return c.id
+func (c *ctx) RequestID() string {
+	return c.requestID
 }
 
-func (c ctx) Authenticated() bool {
-	return c.uid != 0
+func (c *ctx) RequestContext() context.Context {
+	return c.requestContext
 }
 
-func (c ctx) UID() uint {
+func (c *ctx) Authenticated() bool {
+	return !c.uid.IsNil()
+}
+
+func (c *ctx) UID() xid.ID {
 	return c.uid
 }

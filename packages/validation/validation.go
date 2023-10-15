@@ -17,7 +17,7 @@ var (
 )
 
 func init() {
-	validate.UseActualTagWhenTranslate()
+	// validate.UseActualTagWhenTranslate()
 
 	jp := ja.New()
 	uni = ut.New(jp, jp)

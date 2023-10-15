@@ -1,7 +1,8 @@
-package api
+package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -25,7 +26,7 @@ import (
 	"go-gin-clean-arch/config"
 )
 
-func Execute() {
+func main() {
 	logger := log.Logger()
 	defer logger.Sync()
 
@@ -43,13 +44,15 @@ func Execute() {
 
 	engine := gin.New()
 
-	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
-
-	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
-	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
-
 	// cors
 	engine.Use(middleware.Cors(nil))
+
+	// health check
+	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
+
+	// middlewares
+	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
+	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
 
 	// cookie
 	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
@@ -79,7 +82,7 @@ func Execute() {
 	}
 
 	go func() {
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err = srv.ListenAndServe(); err != nil && !errors.Is(http.ErrServerClosed, err) {
 			panic(err)
 		}
 	}()

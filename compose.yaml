@@ -1,15 +1,18 @@
-version: '3'
+version: '3.5'
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      target: dev
+    command: air
     ports:
       - '8080:8080'
+    working_dir: /project_root
     volumes:
-      - '.:/go/src'
+      - ./:/project_root/
     depends_on:
       - 'db'
+
   db:
     image: 'mysql:8.0'
     ports:
@@ -22,3 +25,12 @@ services:
       TZ: 'Asia/Tokyo'
     volumes:
       - './tmp/mysql:/var/lib/mysql'
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./doc/openapi.yaml:/openapi.yaml
+    environment:
+      SWAGGER_JSON: /openapi.yaml
