@@ -4,24 +4,23 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"context"
+	"github.com/gin-contrib/sessions"
 	"go-gin-clean-arch/adapter/controller/http/middleware"
-	"go-gin-clean-arch/adapter/presenter"
+	"go-gin-clean-arch/adapter/controller/http/router"
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/http/router"
 	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/usecase"
+	"net/http"
 )
 
 type user struct {
-	inputFactory  usecase.UserInputFactory
-	outputFactory func(c *gin.Context) usecase.UserOutputPort
+	usecase usecase.User
 }
 
-func NewUser(r *router.Router, inputFactory usecase.UserInputFactory, outputFactory presenter.UserOutputFactory) {
+func NewUser(r *router.Router, usecase usecase.User) {
 	handler := user{
-		inputFactory:  inputFactory,
-		outputFactory: outputFactory,
+		usecase: usecase,
 	}
 
 	r.Group("users", nil, func(r *router.Router) {
@@ -44,10 +43,13 @@ func (u user) Create(ctx context.Context, c *gin.Context) error {
 		return nil
 	}
 
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	id, err := u.usecase.Create(ctx, &req)
+	if err != nil {
+		return err
+	}
 
-	return inputPort.Create(ctx, &req)
+	c.JSON(http.StatusCreated, id)
+	return nil
 }
 
 func (u user) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
@@ -57,10 +59,13 @@ func (u user) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
 		return nil
 	}
 
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	res, err := u.usecase.ResetPasswordRequest(ctx, &req)
+	if err != nil {
+		return err
+	}
 
-	return inputPort.ResetPasswordRequest(ctx, &req)
+	c.JSON(http.StatusOK, res)
+	return nil
 }
 
 func (u user) ResetPassword(ctx context.Context, c *gin.Context) error {
@@ -70,10 +75,13 @@ func (u user) ResetPassword(ctx context.Context, c *gin.Context) error {
 		return nil
 	}
 
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	err := u.usecase.ResetPassword(ctx, &req)
+	if err != nil {
+		return err
+	}
 
-	return inputPort.ResetPassword(ctx, &req)
+	c.Status(http.StatusOK)
+	return nil
 }
 
 func (u user) Login(ctx context.Context, c *gin.Context) error {
@@ -83,10 +91,29 @@ func (u user) Login(ctx context.Context, c *gin.Context) error {
 		return nil
 	}
 
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	res, err := u.usecase.Login(ctx, &req)
+	if err != nil {
+		return err
+	}
 
-	return inputPort.Login(ctx, &req)
+	if res == nil {
+		c.Status(http.StatusUnauthorized)
+		return nil
+	}
+
+	if req.Session {
+		session := sessions.DefaultMany(c, config.UserRealm)
+		session.Set("token", res.Token)
+		session.Set("refresh_token", res.RefreshToken)
+		if err := session.Save(); err != nil {
+			return err
+		}
+		c.Status(http.StatusOK)
+	} else {
+		c.JSON(http.StatusOK, res)
+	}
+
+	return nil
 }
 
 func (u user) RefreshToken(_ context.Context, c *gin.Context) error {
@@ -96,15 +123,37 @@ func (u user) RefreshToken(_ context.Context, c *gin.Context) error {
 		return nil
 	}
 
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	res, err := u.usecase.RefreshToken(&req)
+	if err != nil {
+		return err
+	}
 
-	return inputPort.RefreshToken(&req)
+	if res == nil {
+		c.Status(http.StatusUnauthorized)
+		return nil
+	}
+
+	if req.Session {
+		session := sessions.DefaultMany(c, config.UserRealm)
+		session.Set("token", res.Token)
+		session.Set("refresh_token", res.RefreshToken)
+		if err := session.Save(); err != nil {
+			return err
+		}
+		c.Status(http.StatusOK)
+	} else {
+		c.JSON(http.StatusOK, res)
+	}
+
+	return nil
 }
 
 func (u user) GetMe(ctx context.Context, c *gin.Context) error {
-	outputPort := u.outputFactory(c)
-	inputPort := u.inputFactory(outputPort)
+	res, err := u.usecase.GetByID(ctx, util.UID(ctx))
+	if err != nil {
+		return err
+	}
 
-	return inputPort.GetByID(ctx, util.UID(ctx))
+	c.JSON(http.StatusOK, res)
+	return nil
 }

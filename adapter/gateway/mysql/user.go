@@ -6,12 +6,11 @@ import (
 	"context"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/domain/vobj"
-	"go-gin-clean-arch/usecase"
 )
 
 type user struct{}
 
-func NewUser() usecase.UserRepository {
+func NewUser() domain.UserRepository {
 	return &user{}
 }
 
@@ -68,7 +67,7 @@ func (u user) EmailExists(ctx context.Context, email string) (bool, error) {
 	db := getDB(ctx)
 
 	var count int64
-	if err := db.Model(&domain.User{}).Where(&domain.User{Email: email}).Count(&count).Error; err != nil {
+	if err := db.Model(&domain.User{}).Where(map[string]any{"email": email}).Count(&count).Error; err != nil {
 		return false, dbError(err)
 	}
 	return count > 0, nil

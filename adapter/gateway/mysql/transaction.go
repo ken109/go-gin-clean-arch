@@ -3,13 +3,13 @@ package mysql
 import (
 	"context"
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/usecase"
+	"go-gin-clean-arch/domain"
 	"gorm.io/gorm"
 )
 
 type transaction struct{}
 
-func NewTransaction() usecase.TransactionRepository {
+func NewTransaction() domain.TransactionRepository {
 	return &transaction{}
 }
 

@@ -16,95 +16,68 @@ import (
 	"go-gin-clean-arch/resource/response"
 )
 
-type UserInputPort interface {
-	Create(ctx context.Context, req *request.UserCreate) error
+type User interface {
+	Create(ctx context.Context, req *request.UserCreate) (xid.ID, error)
 
-	ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) error
+	ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) (*response.UserResetPasswordRequest, error)
 	ResetPassword(ctx context.Context, req *request.UserResetPassword) error
-	Login(ctx context.Context, req *request.UserLogin) error
-	RefreshToken(req *request.UserRefreshToken) error
+	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
+	RefreshToken(req *request.UserRefreshToken) (*response.UserLogin, error)
 
-	GetByID(ctx context.Context, id xid.ID) error
-}
-
-type UserOutputPort interface {
-	Create(id xid.ID) error
-
-	ResetPasswordRequest(res *response.UserResetPasswordRequest) error
-	ResetPassword() error
-	Login(isSession bool, res *response.UserLogin) error
-	RefreshToken(isSession bool, res *response.UserLogin) error
-
-	GetByID(res *domain.User) error
-}
-
-type UserRepository interface {
-	Create(ctx context.Context, user *domain.User) (xid.ID, error)
 	GetByID(ctx context.Context, id xid.ID) (*domain.User, error)
-	GetByEmail(ctx context.Context, email string) (*domain.User, error)
-	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*domain.User, error)
-	Update(ctx context.Context, user *domain.User) error
-
-	EmailExists(ctx context.Context, email string) (bool, error)
 }
 
 type user struct {
-	outputPort      UserOutputPort
-	transactionRepo TransactionRepository
-	userRepo        UserRepository
+	transactionRepo domain.TransactionRepository
+	userRepo        domain.UserRepository
 	email           mail.Sender
 }
 
-type UserInputFactory func(outputPort UserOutputPort) UserInputPort
-
-func NewUserInputFactory(txr TransactionRepository, tr UserRepository, email mail.Sender) UserInputFactory {
-	return func(o UserOutputPort) UserInputPort {
-		return &user{
-			outputPort:      o,
-			transactionRepo: txr,
-			userRepo:        tr,
-			email:           email,
-		}
+func NewUser(txr domain.TransactionRepository, tr domain.UserRepository, email mail.Sender) User {
+	return &user{
+		transactionRepo: txr,
+		userRepo:        tr,
+		email:           email,
 	}
 }
 
-func (u user) Create(ctx context.Context, req *request.UserCreate) error {
-	email, err := u.userRepo.EmailExists(ctx, req.Email)
+func (u user) Create(ctx context.Context, req *request.UserCreate) (xid.ID, error) {
+	emailExists, err := u.userRepo.EmailExists(ctx, req.Email)
 	if err != nil {
-		return err
+		return xid.NilID(), err
 	}
 
-	if email {
+	if emailExists {
 		util.InvalidField(ctx, "email", "既に使用されています")
 	}
 
 	newUser, err := domain.NewUser(ctx, req)
 	if err != nil {
-		return err
+		return xid.NilID(), err
 	}
 
 	if util.IsInvalid(ctx) {
-		return util.ValidationError(ctx)
+		return xid.NilID(), util.ValidationError(ctx)
 	}
 
 	id, err := u.userRepo.Create(ctx, newUser)
 	if err != nil {
-		return err
+		return xid.NilID(), err
 	}
 
-	return u.outputPort.Create(id)
+	return id, nil
 }
 
-func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) error {
+func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) (*response.UserResetPasswordRequest, error) {
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
 		switch v := err.(type) {
 		case *errors.Expected:
 			if !v.ChangeStatus(http.StatusNotFound, http.StatusOK) {
-				return err
+				return nil, err
 			}
 		default:
-			return err
+			return nil, err
 		}
 	}
 
@@ -112,7 +85,7 @@ func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPa
 
 	res.Duration, res.Expire, err = user.RecoveryToken.Generate()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = u.transactionRepo.Do(ctx, func(ctx context.Context) error {
@@ -133,10 +106,10 @@ func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPa
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return u.outputPort.ResetPasswordRequest(&res)
+	return &res, nil
 }
 
 func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword) error {
@@ -157,10 +130,10 @@ func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword)
 	return u.userRepo.Update(ctx, user)
 }
 
-func (u user) Login(ctx context.Context, req *request.UserLogin) error {
+func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error) {
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if user.Password.IsValid(req.Password) {
@@ -170,14 +143,14 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) error {
 			"uid": user.ID,
 		})
 		if err != nil {
-			return errors.NewUnexpected(err)
+			return nil, errors.NewUnexpected(err)
 		}
-		return u.outputPort.Login(req.Session, &res)
+		return &res, nil
 	}
-	return u.outputPort.Login(req.Session, nil)
+	return nil, nil
 }
 
-func (u user) RefreshToken(req *request.UserRefreshToken) error {
+func (u user) RefreshToken(req *request.UserRefreshToken) (*response.UserLogin, error) {
 	var (
 		res response.UserLogin
 		ok  bool
@@ -186,19 +159,19 @@ func (u user) RefreshToken(req *request.UserRefreshToken) error {
 
 	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.UserRealm, req.RefreshToken)
 	if err != nil {
-		return errors.NewUnexpected(err)
+		return nil, errors.NewUnexpected(err)
 	}
 
 	if !ok {
-		return nil
+		return nil, nil
 	}
-	return u.outputPort.RefreshToken(req.Session, &res)
+	return &res, nil
 }
 
-func (u user) GetByID(ctx context.Context, id xid.ID) error {
+func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
 	res, err := u.userRepo.GetByID(ctx, id)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return u.outputPort.GetByID(res)
+	return res, nil
 }

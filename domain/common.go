@@ -3,9 +3,14 @@ package domain
 import (
 	"time"
 
+	"context"
 	"github.com/rs/xid"
 	"gorm.io/gorm"
 )
+
+type TransactionRepository interface {
+	Do(ctx context.Context, fn func(ctx context.Context) error) error
+}
 
 type SoftDeleteModel struct {
 	ID        xid.ID         `json:"id" gorm:"primaryKey;autoIncrement:false"`

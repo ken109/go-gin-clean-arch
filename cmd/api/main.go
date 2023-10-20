@@ -15,18 +15,15 @@ import (
 	jwt "github.com/ken109/gin-jwt"
 
 	httpController "go-gin-clean-arch/adapter/controller/http"
+	"go-gin-clean-arch/adapter/controller/http/middleware"
+	"go-gin-clean-arch/adapter/controller/http/router"
 	"go-gin-clean-arch/adapter/gateway/mail"
 	mysqlRepository "go-gin-clean-arch/adapter/gateway/mysql"
-	"go-gin-clean-arch/adapter/presenter"
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/driver"
 	"go-gin-clean-arch/packages/log"
 	"go-gin-clean-arch/usecase"
-
-	"go-gin-clean-arch/packages/http/router"
-
-	middleware2 "go-gin-clean-arch/adapter/controller/http/middleware"
-	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/domain"
 )
 
 func main() {
@@ -48,18 +45,18 @@ func main() {
 	engine := gin.New()
 
 	// cors
-	engine.Use(middleware2.Cors(nil))
+	engine.Use(middleware.Cors(nil))
 
 	// health check
 	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// middlewares
 	engine.Use(requestid.New())
-	engine.Use(middleware2.Log(log.ZapLogger(), time.RFC3339, false))
-	engine.Use(middleware2.RecoveryWithLog(log.ZapLogger(), true))
+	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
+	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
 
 	// cookie
-	engine.Use(middleware2.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
+	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
 
 	db, err := driver.NewRDB()
 	if err != nil {
@@ -80,13 +77,12 @@ func main() {
 	userRepository := mysqlRepository.NewUser()
 
 	// ----- usecase -----
-	userInputFactory := usecase.NewUserInputFactory(transactionRepository, userRepository, mailSender)
-	userOutputFactory := presenter.NewUserOutputFactory()
+	userUsecase := usecase.NewUser(transactionRepository, userRepository, mailSender)
 
 	// ----- controller -----
 	r := router.New(engine, db)
 
-	httpController.NewUser(r, userInputFactory, userOutputFactory)
+	httpController.NewUser(r, userUsecase)
 
 	// serve
 	srv := &http.Server{
