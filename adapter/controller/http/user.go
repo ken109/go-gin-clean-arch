@@ -3,11 +3,12 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 
+	"context"
+	"go-gin-clean-arch/adapter/controller/http/middleware"
 	"go-gin-clean-arch/adapter/presenter"
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/context"
-	"go-gin-clean-arch/packages/http/middleware"
 	"go-gin-clean-arch/packages/http/router"
+	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/usecase"
 )
@@ -105,5 +106,5 @@ func (u user) GetMe(ctx context.Context, c *gin.Context) error {
 	outputPort := u.outputFactory(c)
 	inputPort := u.inputFactory(outputPort)
 
-	return inputPort.GetByID(ctx, ctx.UID())
+	return inputPort.GetByID(ctx, util.UID(ctx))
 }

@@ -7,7 +7,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	jaTranslations "github.com/go-playground/validator/v10/translations/ja"
-	"go-gin-clean-arch/packages/util"
+	"strings"
 )
 
 var (
@@ -18,8 +18,8 @@ var (
 
 func init() {
 	registerFieldTrans(map[string]string{
-		"Email": "メールアドレス",
-		"Age":   "年齢",
+		"email": "メールアドレス",
+		"age":   "年齢",
 	})
 }
 
@@ -89,10 +89,15 @@ func Translator() ut.Translator {
 func registerFieldTrans(values map[string]string) {
 	validate.RegisterTagNameFunc(
 		func(fld reflect.StructField) string {
-			if value, ok := values[fld.Name]; ok {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0] // jsonタグ名を取得する
+			if name == "-" {
+				return ""
+			}
+
+			if value, ok := values[name]; ok {
 				return value
 			}
-			return util.SnakeCase(fld.Name)
+			return name
 		},
 	)
 }

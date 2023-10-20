@@ -1,8 +1,9 @@
 package domain
 
 import (
+	"context"
 	"go-gin-clean-arch/domain/vobj"
-	"go-gin-clean-arch/packages/context"
+	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"
 )
 
@@ -20,7 +21,7 @@ func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 		RecoveryToken: vobj.NewRecoveryToken(""),
 	}
 
-	ctx.Validate(user)
+	util.Validate(ctx, user)
 
 	password, err := vobj.NewPassword(ctx, dto.Password, dto.PasswordConfirm)
 	if err != nil {
@@ -34,7 +35,7 @@ func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 
 func (u *User) ResetPassword(ctx context.Context, dto *request.UserResetPassword) error {
 	if !u.RecoveryToken.IsValid() {
-		ctx.FieldError("RecoveryToken", "リカバリートークンが無効です")
+		util.InvalidField(ctx, "RecoveryToken", "リカバリートークンが無効です")
 		return nil
 	}
 

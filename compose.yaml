@@ -7,6 +7,8 @@ services:
     command: air
     ports:
       - '8080:8080'
+    environment:
+      GIN_MODE: debug
     working_dir: /project_root
     volumes:
       - ./:/project_root/

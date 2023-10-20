@@ -1,22 +1,24 @@
 package router
 
 import (
-	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/packages/errors"
 
+	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/xid"
+	"go-gin-clean-arch/config"
 	"gorm.io/gorm"
 )
 
 type Router struct {
-	g     *gin.RouterGroup
-	getDB func() *gorm.DB
+	g  *gin.RouterGroup
+	db *gorm.DB
 }
 
-func New(engine *gin.Engine, getDB func() *gorm.DB) *Router {
+func New(engine *gin.Engine, db *gorm.DB) *Router {
 	return &Router{
-		g:     engine.Group(""),
-		getDB: getDB,
+		g:  engine.Group(""),
+		db: db,
 	}
 }
 
@@ -25,8 +27,8 @@ func (r *Router) Group(relativePath string, handlers []gin.HandlerFunc, fn func(
 		handlers = []gin.HandlerFunc{}
 	}
 	fn(&Router{
-		g:     r.g.Group(relativePath, handlers...),
-		getDB: r.getDB,
+		g:  r.g.Group(relativePath, handlers...),
+		db: r.db,
 	})
 }
 
@@ -62,7 +64,17 @@ func (r *Router) Head(relativePath string, handlerFunc HandlerFunc) {
 
 func (r *Router) wrapperFunc(handlerFunc HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx := context.New(c, r.getDB)
+		ctx := context.WithValue(c.Request.Context(), config.DBKey, r.db)
+
+		var uid xid.ID
+		claimsInterface, ok := c.Get("claims")
+		if ok {
+			if uidInterface, ok := claimsInterface.(map[string]interface{})["uid"]; ok {
+				uid, _ = xid.FromString(uidInterface.(string))
+			}
+		}
+		ctx = context.WithValue(ctx, config.UIDKey, uid)
+		ctx = context.WithValue(ctx, config.ErrorKey, errors.NewValidation())
 
 		err := handlerFunc(ctx, c)
 		if err != nil {

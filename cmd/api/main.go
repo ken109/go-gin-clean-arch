@@ -22,10 +22,11 @@ import (
 	"go-gin-clean-arch/packages/log"
 	"go-gin-clean-arch/usecase"
 
-	"go-gin-clean-arch/packages/http/middleware"
 	"go-gin-clean-arch/packages/http/router"
 
+	middleware2 "go-gin-clean-arch/adapter/controller/http/middleware"
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/domain"
 )
 
 func main() {
@@ -47,36 +48,45 @@ func main() {
 	engine := gin.New()
 
 	// cors
-	engine.Use(middleware.Cors(nil))
+	engine.Use(middleware2.Cors(nil))
 
 	// health check
 	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// middlewares
 	engine.Use(requestid.New())
-	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
-	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
+	engine.Use(middleware2.Log(log.ZapLogger(), time.RFC3339, false))
+	engine.Use(middleware2.RecoveryWithLog(log.ZapLogger(), true))
 
 	// cookie
-	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
+	engine.Use(middleware2.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))
 
-	r := router.New(engine, driver.GetRDB)
+	db, err := driver.NewRDB()
+	if err != nil {
+		logger.Fatal(fmt.Sprintf("Failed to connect to DB: %+v", err))
+	}
+
+	err = db.AutoMigrate(&domain.User{})
+	if err != nil {
+		logger.Fatal(fmt.Sprintf("Failed to migrate DB: %+v", err))
+	}
 
 	// dependencies injection
 	// ----- gateway -----
 	mailSender := mail.NewSender()
 
 	// mysql
+	transactionRepository := mysqlRepository.NewTransaction()
 	userRepository := mysqlRepository.NewUser()
 
 	// ----- usecase -----
-	userInputFactory := usecase.NewUserInputFactory(userRepository, mailSender)
+	userInputFactory := usecase.NewUserInputFactory(transactionRepository, userRepository, mailSender)
 	userOutputFactory := presenter.NewUserOutputFactory()
 
 	// ----- controller -----
-	httpController.NewUser(r, userInputFactory, userOutputFactory)
+	r := router.New(engine, db)
 
-	logger.Info("Succeeded in dependencies injection.")
+	httpController.NewUser(r, userInputFactory, userOutputFactory)
 
 	// serve
 	srv := &http.Server{

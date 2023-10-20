@@ -99,6 +99,9 @@ func RecoveryWithLog(logger *zap.Logger, stack bool) gin.HandlerFunc {
 						zap.String("request", string(httpRequest)),
 						zap.String("stack", string(debug.Stack())),
 					)
+					if gin.Mode() == gin.DebugMode {
+						fmt.Println(string(debug.Stack()))
+					}
 				} else {
 					logger.Error(
 						"[Recovery from panic]",

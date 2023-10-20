@@ -3,13 +3,14 @@ package usecase
 import (
 	"net/http"
 
+	"context"
 	jwt "github.com/ken109/gin-jwt"
 	"github.com/rs/xid"
 	"go-gin-clean-arch/adapter/gateway/mail"
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
-	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/mailbody"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/resource/response"
@@ -48,19 +49,21 @@ type UserRepository interface {
 }
 
 type user struct {
-	outputPort UserOutputPort
-	userRepo   UserRepository
-	email      mail.Sender
+	outputPort      UserOutputPort
+	transactionRepo TransactionRepository
+	userRepo        UserRepository
+	email           mail.Sender
 }
 
 type UserInputFactory func(outputPort UserOutputPort) UserInputPort
 
-func NewUserInputFactory(tr UserRepository, email mail.Sender) UserInputFactory {
+func NewUserInputFactory(txr TransactionRepository, tr UserRepository, email mail.Sender) UserInputFactory {
 	return func(o UserOutputPort) UserInputPort {
 		return &user{
-			outputPort: o,
-			userRepo:   tr,
-			email:      email,
+			outputPort:      o,
+			transactionRepo: txr,
+			userRepo:        tr,
+			email:           email,
 		}
 	}
 }
@@ -72,7 +75,7 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) error {
 	}
 
 	if email {
-		ctx.FieldError("Email", "既に使用されています")
+		util.InvalidField(ctx, "email", "既に使用されています")
 	}
 
 	newUser, err := domain.NewUser(ctx, req)
@@ -80,8 +83,8 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) error {
 		return err
 	}
 
-	if ctx.IsInValid() {
-		return ctx.ValidationError()
+	if util.IsInvalid(ctx) {
+		return util.ValidationError(ctx)
 	}
 
 	id, err := u.userRepo.Create(ctx, newUser)
@@ -112,24 +115,22 @@ func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPa
 		return err
 	}
 
-	err = ctx.Transaction(
-		func(ctx context.Context) error {
-			err = u.userRepo.Update(ctx, user)
-			if err != nil {
-				return err
-			}
+	err = u.transactionRepo.Do(ctx, func(ctx context.Context) error {
+		err = u.userRepo.Update(ctx, user)
+		if err != nil {
+			return err
+		}
 
-			err = u.email.Send(user.Email, mailbody.UserResetPasswordRequest{
-				URL:   config.Env.App.URL,
-				Token: user.RecoveryToken.String(),
-			})
-			if err != nil {
-				return err
-			}
+		err = u.email.Send(user.Email, mailbody.UserResetPasswordRequest{
+			URL:   config.Env.App.URL,
+			Token: user.RecoveryToken.String(),
+		})
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	)
+		return nil
+	})
 
 	if err != nil {
 		return err
@@ -149,8 +150,8 @@ func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword)
 		return err
 	}
 
-	if ctx.IsInValid() {
-		return ctx.ValidationError()
+	if util.IsInvalid(ctx) {
+		return util.ValidationError(ctx)
 	}
 
 	return u.userRepo.Update(ctx, user)

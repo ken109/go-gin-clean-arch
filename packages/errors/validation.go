@@ -2,12 +2,10 @@ package errors
 
 import (
 	"encoding/json"
-	"regexp"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
-	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/packages/validation"
+	"regexp"
 )
 
 type Validation struct {
@@ -21,25 +19,24 @@ func NewValidation() *Error {
 	}
 }
 
-func (verr Validation) MarshalJSON() ([]byte, error) {
+func (verr *Validation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(verr.errors)
 }
 
 func (verr *Validation) Add(fieldName string, message string) {
-	key := util.SnakeCase(fieldName)
-	if _, ok := verr.errors[key]; !ok {
-		verr.errors[key] = []string{message}
+	if _, ok := verr.errors[fieldName]; !ok {
+		verr.errors[fieldName] = []string{message}
 	} else {
-		verr.errors[key] = append(verr.errors[key], message)
+		verr.errors[fieldName] = append(verr.errors[fieldName], message)
 	}
 }
 
-func (verr Validation) Error() string {
+func (verr *Validation) Error() string {
 	b, _ := json.Marshal(verr)
 	return string(b)
 }
 
-var getFieldPathRegex = regexp.MustCompile(`^[a-zA-Z]+\.(.+)`)
+var getFieldPathRegex = regexp.MustCompile(`^[^.]+\.([^.]+\..+)`)
 
 func (verr *Validation) Validate(request interface{}) (invalid bool) {
 	err := validation.Validate().Struct(request)
@@ -55,9 +52,9 @@ func (verr *Validation) Validate(request interface{}) (invalid bool) {
 			}
 		}
 	}
-	return verr.Invalid()
+	return verr.IsInvalid()
 }
 
-func (verr Validation) Invalid() bool {
+func (verr *Validation) IsInvalid() bool {
 	return len(verr.errors) > 0
 }

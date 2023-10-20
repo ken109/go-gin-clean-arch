@@ -49,29 +49,30 @@ func (e Error) MarshalJSON() ([]byte, error) {
 			})
 		} else {
 			return json.Marshal(struct {
-				Kind       string     `json:"kind"`
-				Unexpected Unexpected `json:"unexpected"`
+				Kind       string      `json:"kind"`
+				Unexpected *Unexpected `json:"unexpected"`
 			}{
 				Kind:       string(e.kind),
-				Unexpected: *e.unexpected,
+				Unexpected: e.unexpected,
 			})
 		}
 	case KindExpected:
 		return json.Marshal(struct {
-			Kind     string   `json:"kind"`
-			Expected Expected `json:"expected"`
+			Kind     string    `json:"kind"`
+			Expected *Expected `json:"expected"`
 		}{
 			Kind:     string(e.kind),
-			Expected: *e.expected,
+			Expected: e.expected,
 		})
 	case KindValidation:
-		return json.Marshal(struct {
-			Kind       string     `json:"kind"`
-			Validation Validation `json:"validation"`
+		a, err := json.Marshal(struct {
+			Kind       string      `json:"kind"`
+			Validation *Validation `json:"validation"`
 		}{
 			Kind:       string(e.kind),
-			Validation: *e.validation,
+			Validation: e.validation,
 		})
+		return a, err
 	}
 	return nil, errors.New("エラー種別が正しくありません。")
 }

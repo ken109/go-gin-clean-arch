@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"database/sql/driver"
 
+	"context"
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/util"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -16,7 +17,7 @@ type Password string
 
 func NewPassword(ctx context.Context, password, passwordConfirm string) (*Password, error) {
 	if password != passwordConfirm {
-		ctx.FieldError("PasswordConfirm", "パスワードと一致しません")
+		util.InvalidField(ctx, "PasswordConfirm", "パスワードと一致しません")
 		return nil, nil
 	}
 

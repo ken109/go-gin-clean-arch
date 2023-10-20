@@ -8,12 +8,12 @@ import (
 
 func TestValidation_Validate(t *testing.T) {
 	type Profile struct {
-		Age int `validate:"required,min=0"`
+		Age int `json:"age" validate:"required,min=0"`
 	}
 
 	type User struct {
-		Email   string `validate:"required"`
-		Profile `inline:"true"`
+		Email string `json:"email" validate:"required"`
+		Profile
 	}
 
 	type args struct {

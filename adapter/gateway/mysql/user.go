@@ -3,9 +3,9 @@ package mysql
 import (
 	"github.com/rs/xid"
 
+	"context"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/domain/vobj"
-	"go-gin-clean-arch/packages/context"
 	"go-gin-clean-arch/usecase"
 )
 
@@ -16,7 +16,7 @@ func NewUser() usecase.UserRepository {
 }
 
 func (u user) Create(ctx context.Context, user *domain.User) (xid.ID, error) {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	if err := db.Create(user).Error; err != nil {
 		return xid.NilID(), dbError(err)
@@ -26,7 +26,7 @@ func (u user) Create(ctx context.Context, user *domain.User) (xid.ID, error) {
 }
 
 func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	var user domain.User
 	err := db.First(&user, id).Error
@@ -37,7 +37,7 @@ func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
 }
 
 func (u user) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	var dest domain.User
 	err := db.Where(&domain.User{Email: email}).First(&dest).Error
@@ -48,7 +48,7 @@ func (u user) GetByEmail(ctx context.Context, email string) (*domain.User, error
 }
 
 func (u user) GetByRecoveryToken(ctx context.Context, recoveryToken string) (*domain.User, error) {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	var dest domain.User
 	err := db.Where(&domain.User{RecoveryToken: vobj.NewRecoveryToken(recoveryToken)}).First(&dest).Error
@@ -59,13 +59,13 @@ func (u user) GetByRecoveryToken(ctx context.Context, recoveryToken string) (*do
 }
 
 func (u user) Update(ctx context.Context, user *domain.User) error {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	return dbError(db.Model(user).Updates(user).Error)
 }
 
 func (u user) EmailExists(ctx context.Context, email string) (bool, error) {
-	db := ctx.DB()
+	db := getDB(ctx)
 
 	var count int64
 	if err := db.Model(&domain.User{}).Where(&domain.User{Email: email}).Count(&count).Error; err != nil {

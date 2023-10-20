@@ -8,10 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+func NewRDB() (*gorm.DB, error) {
+	var db *gorm.DB
 
-func init() {
-	var err error
 	var con string
 
 	if config.Env.DB.Socket != "" {
@@ -28,12 +27,10 @@ func init() {
 		config.Env.DB.Name,
 	)
 
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-}
 
-func GetRDB() *gorm.DB {
-	return db
+	return db, nil
 }
