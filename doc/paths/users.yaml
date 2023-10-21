@@ -1,0 +1,113 @@
+users:
+  post:
+    tags:
+      - User
+    summary: Create
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users.yaml#/create_request'
+          examples:
+            ok:
+              $ref: '../components/examples/users.yaml#/create_request'
+    responses:
+      '200':
+        description: Successful response
+
+login:
+  post:
+    tags:
+      - User
+    summary: Login
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users.yaml#/login_request'
+          examples:
+            ok:
+              $ref: '../components/examples/users.yaml#/login_request'
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/users.yaml#/login_response'
+
+refresh_token:
+  post:
+    security:
+      - bearerAuth: [ ]
+    tags:
+      - User
+    summary: RefreshToken
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users.yaml#/refresh_token_request'
+          examples:
+            ok:
+              $ref: '../components/examples/users.yaml#/refresh_token_request'
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/users.yaml#/refresh_token_response'
+
+reset_password_request:
+  patch:
+    security:
+      - bearerAuth: [ ]
+    tags:
+      - User
+    summary: ResetPasswordRequest
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users.yaml#/reset_password_request'
+          examples:
+            ok:
+              $ref: '../components/examples/users.yaml#/reset_password_request'
+    responses:
+      '200':
+        description: Successful response
+
+reset_password:
+  patch:
+    security:
+      - bearerAuth: [ ]
+    tags:
+      - User
+    summary: ResetPassword
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users.yaml#/reset_password_request'
+          examples:
+            ok:
+              $ref: '../components/examples/users.yaml#/reset_password_request'
+    responses:
+      '200':
+        description: Successful response
+
+me:
+  get:
+    security:
+      - bearerAuth: [ ]
+    tags:
+      - User
+    summary: Me
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/users.yaml#/me_response'

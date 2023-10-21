@@ -34,5 +34,7 @@ services:
       - "8081:8080"
     volumes:
       - ./doc/openapi.yaml:/openapi.yaml
+      - ./doc/paths:/paths
+      - ./doc/components:/components
     environment:
       SWAGGER_JSON: /openapi.yaml

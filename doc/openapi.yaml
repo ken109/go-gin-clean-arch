@@ -1,137 +1,42 @@
 openapi: 3.1.0
 
 info:
-  title: Go DDD
+  title: Go API
   version: 1.0.0
 
 servers:
   - url: http://localhost:8080
+    description: Local server
 
 tags:
+  - name: Health
+    description: ヘルスチェック
   - name: User
+    description: ユーザー
 
 paths:
-  /users:
-    post:
-      tags:
-        - User
-      summary: Create
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                email: 'example@example.com'
-                password: 'password'
-                password_confirm: 'password'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
-  /users/login:
-    post:
-      tags:
-        - User
-      summary: Login
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                session: false
-                email: 'example@example.com'
-                password: 'password'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
-  /users/refresh-token:
-    post:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - User
-      summary: RefreshToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                session: false
-                refresh_token: ''
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
-  /users/reset-password-request:
-    patch:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - User
-      summary: ResetPasswordRequest
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                email: 'example@example.com'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
-  /users/reset-password:
-    patch:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - User
-      summary: ResetPassword
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                recovery_token: ''
-                password: 'password'
-                password_confirm: 'password'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
-  /users/me:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - User
-      summary: Me
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: { }
   /health:
     get:
       tags:
-        - default
+        - Health
       summary: Health
       responses:
         '200':
           description: Successful response
           content:
             application/json: { }
-
+  /users:
+    $ref: './paths/users.yaml#/users'
+  /users/login:
+    $ref: './paths/users.yaml#/login'
+  /users/refresh-token:
+    $ref: './paths/users.yaml#/refresh_token'
+  /users/reset-password-request:
+    $ref: './paths/users.yaml#/reset_password_request'
+  /users/reset-password:
+    $ref: './paths/users.yaml#/reset_password'
+  /users/me:
+    $ref: './paths/users.yaml#/me'
 
 components:
   securitySchemes:

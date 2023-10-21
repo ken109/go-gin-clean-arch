@@ -1,0 +1,26 @@
+create_request:
+  value:
+    email: 'example@example.com'
+    password: 'password'
+    password_confirm: 'password'
+
+login_request:
+  value:
+    session: false
+    email: 'example@example.com'
+    password: 'password'
+
+refresh_token_request:
+  value:
+    session: false
+    refresh_token: ''
+
+reset_password_request_request:
+  value:
+    email: 'example@example.com'
+
+reset_password_request:
+  value:
+    recovery_token: ''
+    password: 'password'
+    password_confirm: 'password'

@@ -1,0 +1,69 @@
+create_request:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+    password_confirm:
+      type: string
+
+login_request:
+  type: object
+  properties:
+    session:
+      type: boolean
+      description: If true, the response will contain a session token
+    email:
+      type: string
+    password:
+      type: string
+
+login_response:
+  type: object
+  properties:
+    token:
+      type: string
+    refresh_token:
+      type: string
+
+refresh_token_request:
+  type: object
+  properties:
+    session:
+      type: boolean
+    refresh_token:
+      type: string
+
+refresh_token_response:
+  type: object
+  properties:
+    token:
+      type: string
+    refresh_token:
+      type: string
+
+reset_password_request_request:
+  type: object
+  properties:
+    email:
+    type: string
+
+reset_password_request:
+  type: object
+  properties:
+    recovery_token:
+      type: string
+    password:
+      type: string
+    password_confirm:
+      type: string
+
+me_response:
+  type: object
+  properties:
+    id:
+      type: string
+    email:
+      type: string
