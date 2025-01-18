@@ -70,7 +70,7 @@ func main() {
 
 	// dependencies injection
 	// ----- gateway -----
-	mailSender := mail.NewSender()
+	mailSender := mail.NewMailSender()
 
 	// mysql
 	transactionRepository := mysqlRepository.NewTransaction()

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	jwt "github.com/ken109/gin-jwt"
@@ -10,9 +11,9 @@ import (
 	"go-gin-clean-arch/adapter/gateway/mail"
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
+	"go-gin-clean-arch/domain/service/mailf"
 	"go-gin-clean-arch/packages/errors"
 	"go-gin-clean-arch/packages/util"
-	"go-gin-clean-arch/resource/mailbody"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/resource/response"
 )
@@ -95,10 +96,14 @@ func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPa
 			return err
 		}
 
-		err = u.email.Send(user.Email, mailbody.UserResetPasswordRequest{
-			URL:   config.Env.App.URL,
-			Token: user.RecoveryToken.String(),
-		})
+		err = u.email.Send(mailf.NewDefaultMail(
+			user.Email,
+			"パスワードリセット",
+			mailf.Data{
+				Title: "パスワード",
+				Body:  fmt.Sprintf("url: %s\ntoken: %s", config.Env.App.URL, user.RecoveryToken.String()),
+			},
+		))
 		if err != nil {
 			return err
 		}

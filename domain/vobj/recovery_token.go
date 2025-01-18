@@ -5,11 +5,11 @@ import (
 	"database/sql/driver"
 	"time"
 
-	crypto "github.com/noknow-hub/go_crypto"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/crypto"
 	"go-gin-clean-arch/packages/errors"
 )
 

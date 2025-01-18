@@ -12,6 +12,7 @@ var Env EnvType
 type EnvType struct {
 	Port string `default:"8080"`
 	App  struct {
+		Name   string `required:"true"`
 		Secret string `required:"true"`
 		URL    string `required:"true"`
 	}
@@ -25,7 +26,7 @@ type EnvType struct {
 	}
 	SMTP struct {
 		Host     string `required:"true"`
-		Port     string `required:"true"`
+		Port     int    `required:"true"`
 		User     string `required:"true"`
 		Password string `required:"true"`
 	}
