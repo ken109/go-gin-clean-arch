@@ -30,11 +30,11 @@ func (e Error) Error() string {
 	message := fmt.Sprintf("%s error: ", e.kind)
 	switch e.kind {
 	case KindUnexpected:
-		message = message + e.unexpected.message
+		message += e.unexpected.message
 	case KindExpected:
-		message = message + e.expected.Error()
+		message += e.expected.Error()
 	case KindValidation:
-		message = message + e.validation.Error()
+		message += e.validation.Error()
 	}
 	return message
 }

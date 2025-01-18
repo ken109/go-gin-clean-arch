@@ -29,8 +29,7 @@ func NewUnexpected(err error, options ...UnexpectedOption) *Error {
 	callerSkip := 3
 
 	for _, option := range options {
-		switch option.Kind() {
-		case UnexpectedOptionKindPanic:
+		if option.Kind() == UnexpectedOptionKindPanic {
 			callerSkip = 5
 		}
 	}

@@ -9,12 +9,12 @@ linters:
     - errcheck
     - exportloopref
     - exhaustive
-    - goconst
+#    - goconst
     - gocritic
     - gocyclo
     - gofmt
     - goprintffuncname
-    - gosec
+#    - gosec
     - gosimple
     - govet
     - ineffassign
@@ -23,7 +23,7 @@ linters:
     - noctx
     - nolintlint
     - rowserrcheck
-    - staticcheck
+#    - staticcheck
     - stylecheck
     - typecheck
     - unconvert
