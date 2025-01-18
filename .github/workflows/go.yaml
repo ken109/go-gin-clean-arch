@@ -27,7 +27,6 @@ jobs:
           args: --verbose
 
   test:
-    name: ubuntu-latest @ Go 1.21
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
