@@ -11,13 +11,36 @@ type Unexpected struct {
 	stack    []Frame
 }
 
-func NewUnexpected(err error) *Error {
+type UnexpectedOption interface {
+	Kind() UnexpectedOptionKind
+}
+
+type UnexpectedOptionKind = string
+
+const UnexpectedOptionKindPanic = "panic"
+
+type WithUnexpectedPanic struct{}
+
+func (w WithUnexpectedPanic) Kind() UnexpectedOptionKind {
+	return UnexpectedOptionKindPanic
+}
+
+func NewUnexpected(err error, options ...UnexpectedOption) *Error {
+	callerSkip := 3
+
+	for _, option := range options {
+		switch option.Kind() {
+		case UnexpectedOptionKindPanic:
+			callerSkip = 5
+		}
+	}
+
 	return &Error{
 		kind: KindUnexpected,
 		unexpected: &Unexpected{
 			message:  err.Error(),
 			original: fmt.Sprintf("%+v", err),
-			stack:    callers(),
+			stack:    callers(callerSkip),
 		},
 	}
 }

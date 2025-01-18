@@ -2,9 +2,11 @@ package mysql
 
 import (
 	"context"
+
+	"gorm.io/gorm"
+
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/packages/errors"
-	"gorm.io/gorm"
 )
 
 func getDB(ctx context.Context) *gorm.DB {

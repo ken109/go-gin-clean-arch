@@ -1,9 +1,10 @@
 package mysql
 
 import (
+	"context"
+
 	"github.com/rs/xid"
 
-	"context"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/domain/vobj"
 )

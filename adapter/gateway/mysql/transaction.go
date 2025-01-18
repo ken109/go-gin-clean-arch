@@ -3,9 +3,10 @@ package mysql
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
-	"gorm.io/gorm"
 )
 
 type transaction struct{}

@@ -2,7 +2,9 @@ package domain
 
 import (
 	"context"
+
 	"github.com/rs/xid"
+
 	"go-gin-clean-arch/domain/vobj"
 	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"

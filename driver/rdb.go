@@ -3,9 +3,10 @@ package driver
 import (
 	"fmt"
 
-	"go-gin-clean-arch/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"go-gin-clean-arch/config"
 )
 
 func NewRDB() (*gorm.DB, error) {

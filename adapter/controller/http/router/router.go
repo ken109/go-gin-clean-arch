@@ -1,13 +1,15 @@
 package router
 
 import (
+	"context"
+
 	"go-gin-clean-arch/packages/errors"
 
-	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
-	"go-gin-clean-arch/config"
 	"gorm.io/gorm"
+
+	"go-gin-clean-arch/config"
 )
 
 type Router struct {
@@ -80,9 +82,9 @@ func (r *Router) wrapperFunc(handlerFunc HandlerFunc) gin.HandlerFunc {
 		if err != nil {
 			switch v := err.(type) {
 			case *errors.Error:
-				v.Response().Do(c)
+				v.Response(c)
 			default:
-				errors.NewUnexpected(v).Response().Do(c)
+				errors.NewUnexpected(v).Response(c)
 			}
 
 			_ = c.Error(err)

@@ -2,7 +2,9 @@ package util
 
 import (
 	"context"
+
 	"github.com/rs/xid"
+
 	"go-gin-clean-arch/config"
 )
 

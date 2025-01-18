@@ -1,16 +1,17 @@
 package vobj
 
 import (
+	"context"
 	"database/sql"
 	"database/sql/driver"
 
-	"context"
-	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/errors"
-	"go-gin-clean-arch/packages/util"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+
+	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/util"
 )
 
 type Password string

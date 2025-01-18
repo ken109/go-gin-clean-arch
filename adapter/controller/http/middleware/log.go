@@ -1,17 +1,17 @@
 package middleware
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http/httputil"
 	"os"
-	"runtime/debug"
 	"strings"
 	"time"
 
-	"github.com/gin-contrib/requestid"
-	"github.com/gin-gonic/gin"
 	"go-gin-clean-arch/packages/errors"
+
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -36,7 +36,7 @@ func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 		var (
 			logFunc = logger.Info
 			fields  = []zap.Field{
-				zap.String("request-id", requestid.Get(c)),
+				zap.String("request-id", c.Writer.Header().Get("X-Request-Id")),
 				zap.Int("status", c.Writer.Status()),
 				zap.String("method", c.Request.Method),
 				zap.String("path", path),
@@ -50,7 +50,14 @@ func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 
 		status := c.Writer.Status()
 		if status >= 400 {
-			fields = append(fields, zap.Strings("errors", c.Errors.Errors()))
+			var realErrors []error
+			for _, err := range c.Errors {
+				realErrors = append(realErrors, err.Err)
+			}
+
+			errorsJSON, _ := json.Marshal(realErrors)
+
+			fields = append(fields, zap.Any("errors", json.RawMessage(errorsJSON)))
 		}
 		if status >= 500 {
 			logFunc = logger.Error
@@ -60,7 +67,7 @@ func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 	}
 }
 
-func RecoveryWithLog(logger *zap.Logger, stack bool) gin.HandlerFunc {
+func RecoveryWithLog(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
@@ -91,27 +98,11 @@ func RecoveryWithLog(logger *zap.Logger, stack bool) gin.HandlerFunc {
 					return
 				}
 
-				if stack {
-					logger.Error(
-						"[Recovery from panic]",
-						zap.Time("time", time.Now()),
-						zap.Any("error", err),
-						zap.String("request", string(httpRequest)),
-						zap.String("stack", string(debug.Stack())),
-					)
-					if gin.Mode() == gin.DebugMode {
-						fmt.Println(string(debug.Stack()))
-					}
-				} else {
-					logger.Error(
-						"[Recovery from panic]",
-						zap.Time("time", time.Now()),
-						zap.Any("error", err),
-						zap.String("request", string(httpRequest)),
-					)
-				}
+				unexpectedErr := errors.NewUnexpected(fmt.Errorf("%+v", err), errors.WithUnexpectedPanic{})
 
-				errors.NewUnexpected(fmt.Errorf("%+v", err)).Response().Do(c)
+				_ = c.Error(unexpectedErr)
+
+				unexpectedErr.Response(c)
 			}
 		}()
 		c.Next()

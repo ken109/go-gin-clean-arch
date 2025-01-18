@@ -2,12 +2,12 @@ package validation
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/go-playground/locales/ja"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	jaTranslations "github.com/go-playground/validator/v10/translations/ja"
-	"strings"
 )
 
 var (

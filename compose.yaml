@@ -1,10 +1,9 @@
-version: '3.5'
 services:
   app:
     build:
       context: .
       target: dev
-    command: air
+    command: bash -c 'air | zap-pretty'
     ports:
       - '8080:8080'
     environment:
@@ -16,7 +15,7 @@ services:
       - 'db'
 
   db:
-    image: 'mysql:8.0'
+    image: 'mysql:8.4'
     ports:
       - '33065:3306'
     environment:

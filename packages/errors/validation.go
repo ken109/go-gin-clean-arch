@@ -2,10 +2,12 @@ package errors
 
 import (
 	"encoding/json"
+	"regexp"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
+
 	"go-gin-clean-arch/packages/validation"
-	"regexp"
 )
 
 type Validation struct {

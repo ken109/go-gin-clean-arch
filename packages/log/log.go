@@ -9,11 +9,7 @@ func init() {
 	var config zap.Config
 	var zapLog *zap.Logger
 
-	if gin.IsDebugging() {
-		config = zap.NewDevelopmentConfig()
-	} else {
-		config = zap.NewProductionConfig()
-	}
+	config = zap.NewProductionConfig()
 
 	config.DisableStacktrace = true
 

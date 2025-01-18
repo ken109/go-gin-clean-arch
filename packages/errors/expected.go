@@ -21,11 +21,15 @@ func NewExpected(statusCode int, message string) *Error {
 	}
 }
 
-func (e Expected) Error() string {
+func NewExpectedWithMessage(msg string) error {
+	return NewExpected(http.StatusBadRequest, msg)
+}
+
+func (e *Expected) Error() string {
 	return fmt.Sprintf("code=%d, msg=%s", e.statusCode, e.msg)
 }
 
-func (e Expected) MarshalJSON() ([]byte, error) {
+func (e *Expected) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Message string `json:"message"`
 	}{
@@ -33,11 +37,11 @@ func (e Expected) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (e Expected) StatusCode() int {
+func (e *Expected) StatusCode() int {
 	return e.statusCode
 }
 
-func (e Expected) Message() string {
+func (e *Expected) Message() string {
 	return e.msg
 }
 
@@ -49,7 +53,7 @@ func (e *Expected) ChangeStatus(before int, after int) bool {
 	return false
 }
 
-func (e Expected) StatusOk() bool {
+func (e *Expected) StatusOk() bool {
 	return e.statusCode < 300
 }
 
@@ -60,5 +64,5 @@ func NotFound() *Error {
 }
 
 func Forbidden() *Error {
-	return NewExpected(http.StatusForbidden, "リソースに対する権限がありません")
+	return NewExpected(http.StatusForbidden, "権限がありません")
 }

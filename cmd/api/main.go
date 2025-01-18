@@ -53,7 +53,7 @@ func main() {
 	// middlewares
 	engine.Use(requestid.New())
 	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
-	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
+	engine.Use(middleware.RecoveryWithLog(log.ZapLogger()))
 
 	// cookie
 	engine.Use(middleware.Session([]string{config.UserRealm}, config.Env.App.Secret, nil))

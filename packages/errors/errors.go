@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-contrib/requestid"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -29,11 +30,11 @@ func (e Error) Error() string {
 	message := fmt.Sprintf("%s error: ", e.kind)
 	switch e.kind {
 	case KindUnexpected:
-		message += e.unexpected.message
+		message = message + e.unexpected.message
 	case KindExpected:
-		message += e.expected.Error()
+		message = message + e.expected.Error()
 	case KindValidation:
-		message += e.validation.Error()
+		message = message + e.validation.Error()
 	}
 	return message
 }
@@ -65,14 +66,13 @@ func (e Error) MarshalJSON() ([]byte, error) {
 			Expected: e.expected,
 		})
 	case KindValidation:
-		a, err := json.Marshal(struct {
+		return json.Marshal(struct {
 			Kind       string      `json:"kind"`
 			Validation *Validation `json:"validation"`
 		}{
 			Kind:       string(e.kind),
 			Validation: e.validation,
 		})
-		return a, err
 	}
 	return nil, errors.New("エラー種別が正しくありません。")
 }
@@ -93,7 +93,7 @@ func (e Error) Validation() *Validation {
 	return e.validation
 }
 
-func (e Error) Response() ErrorResponse {
+func (e Error) Response(c *gin.Context) {
 	var statusCode int
 
 	switch e.kind {
@@ -105,23 +105,11 @@ func (e Error) Response() ErrorResponse {
 		statusCode = http.StatusBadRequest
 	}
 
-	return ErrorResponse{
-		status: statusCode,
-		err:    e,
-	}
-}
-
-type ErrorResponse struct {
-	status int
-	err    Error
-}
-
-func (r ErrorResponse) Do(c *gin.Context) {
-	c.PureJSON(r.status, struct {
+	c.PureJSON(statusCode, struct {
 		RequestID string `json:"request_id"`
 		Error
 	}{
 		RequestID: requestid.Get(c),
-		Error:     r.err,
+		Error:     e,
 	})
 }

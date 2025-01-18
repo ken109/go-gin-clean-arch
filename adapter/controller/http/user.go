@@ -1,17 +1,19 @@
 package http
 
 import (
+	"context"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
-	"context"
 	"github.com/gin-contrib/sessions"
+
 	"go-gin-clean-arch/adapter/controller/http/middleware"
 	"go-gin-clean-arch/adapter/controller/http/router"
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/usecase"
-	"net/http"
 )
 
 type user struct {
