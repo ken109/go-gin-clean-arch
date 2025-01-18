@@ -2,11 +2,12 @@ package mysql
 
 import (
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/cerrors"
 )
 
 func getDB(ctx context.Context) *gorm.DB {
@@ -15,12 +16,12 @@ func getDB(ctx context.Context) *gorm.DB {
 }
 
 func dbError(err error) error {
-	switch err {
-	case nil:
+	switch {
+	case err == nil:
 		return nil
-	case gorm.ErrRecordNotFound:
-		return errors.NotFound()
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return cerrors.NotFound()
 	default:
-		return errors.NewUnexpected(err)
+		return cerrors.NewUnexpected(err)
 	}
 }

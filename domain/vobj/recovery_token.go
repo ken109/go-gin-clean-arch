@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm/schema"
 
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/cerrors"
 	"go-gin-clean-arch/packages/crypto"
-	"go-gin-clean-arch/packages/errors"
 )
 
 type RecoveryToken string
@@ -28,7 +28,7 @@ func (p *RecoveryToken) Generate() (time.Duration, time.Time, error) {
 		config.Env.App.Secret,
 	)
 	if err != nil {
-		return 0, time.Time{}, errors.NewUnexpected(err)
+		return 0, time.Time{}, cerrors.NewUnexpected(err)
 	}
 
 	*p = RecoveryToken(token)
@@ -68,7 +68,7 @@ func (p *RecoveryToken) Scan(value interface{}) error {
 	nullString := &sql.NullString{}
 	err := nullString.Scan(value)
 	if err != nil {
-		return errors.NewUnexpected(err)
+		return cerrors.NewUnexpected(err)
 	}
 
 	*p = RecoveryToken(nullString.String)

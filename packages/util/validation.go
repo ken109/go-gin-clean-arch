@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/cerrors"
 )
 
-func getValidationError(ctx context.Context) *errors.Error {
-	validationError, _ := ctx.Value(config.ErrorKey).(*errors.Error)
+func getValidationError(ctx context.Context) *cerrors.Error {
+	validationError, _ := ctx.Value(config.ErrorKey).(*cerrors.Error)
 	return validationError
 }
 

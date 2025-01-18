@@ -2,14 +2,14 @@ package router
 
 import (
 	"context"
-
-	"go-gin-clean-arch/packages/errors"
+	"errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
 	"gorm.io/gorm"
 
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/cerrors"
 )
 
 type Router struct {
@@ -76,15 +76,16 @@ func (r *Router) wrapperFunc(handlerFunc HandlerFunc) gin.HandlerFunc {
 			}
 		}
 		ctx = context.WithValue(ctx, config.UIDKey, uid)
-		ctx = context.WithValue(ctx, config.ErrorKey, errors.NewValidation())
+		ctx = context.WithValue(ctx, config.ErrorKey, cerrors.NewValidation())
 
 		err := handlerFunc(ctx, c)
 		if err != nil {
-			switch v := err.(type) {
-			case *errors.Error:
+			var v *cerrors.Error
+			switch {
+			case errors.As(err, &v):
 				v.Response(c)
 			default:
-				errors.NewUnexpected(v).Response(c)
+				cerrors.NewUnexpected(v).Response(c)
 			}
 
 			_ = c.Error(err)

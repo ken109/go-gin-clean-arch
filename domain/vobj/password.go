@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/schema"
 
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/cerrors"
 	"go-gin-clean-arch/packages/util"
 )
 
@@ -24,7 +24,7 @@ func NewPassword(ctx context.Context, password, passwordConfirm string) (*Passwo
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), config.BcryptHashCost)
 	if err != nil {
-		return nil, errors.NewUnexpected(err)
+		return nil, cerrors.NewUnexpected(err)
 	}
 
 	value := Password(hashedPassword)
@@ -41,7 +41,7 @@ func (p *Password) Scan(value interface{}) error {
 	nullString := &sql.NullString{}
 	err := nullString.Scan(value)
 	if err != nil {
-		return errors.NewUnexpected(err)
+		return cerrors.NewUnexpected(err)
 	}
 
 	*p = Password(nullString.String)

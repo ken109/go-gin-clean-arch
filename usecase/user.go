@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -12,7 +13,7 @@ import (
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/domain/service/mailf"
-	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/cerrors"
 	"go-gin-clean-arch/packages/util"
 	"go-gin-clean-arch/resource/request"
 	"go-gin-clean-arch/resource/response"
@@ -73,8 +74,9 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (xid.ID, erro
 func (u user) ResetPasswordRequest(ctx context.Context, req *request.UserResetPasswordRequest) (*response.UserResetPasswordRequest, error) {
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
-		switch v := err.(type) {
-		case *errors.Expected:
+		var v *cerrors.Expected
+		switch {
+		case errors.As(err, &v):
 			if !v.ChangeStatus(http.StatusNotFound, http.StatusOK) {
 				return nil, err
 			}
@@ -149,7 +151,7 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.User
 			"uid": user.ID,
 		})
 		if err != nil {
-			return nil, errors.NewUnexpected(err)
+			return nil, cerrors.NewUnexpected(err)
 		}
 		return &res, nil
 	}
@@ -165,7 +167,7 @@ func (u user) RefreshToken(req *request.UserRefreshToken) (*response.UserLogin, 
 
 	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.UserRealm, req.RefreshToken)
 	if err != nil {
-		return nil, errors.NewUnexpected(err)
+		return nil, cerrors.NewUnexpected(err)
 	}
 
 	if !ok {

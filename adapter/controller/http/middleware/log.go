@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"go-gin-clean-arch/packages/errors"
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
+	"go-gin-clean-arch/packages/cerrors"
 )
 
 func Log(logger *zap.Logger, timeFormat string, utc bool) gin.HandlerFunc {
@@ -98,7 +98,7 @@ func RecoveryWithLog(logger *zap.Logger) gin.HandlerFunc {
 					return
 				}
 
-				unexpectedErr := errors.NewUnexpected(fmt.Errorf("%+v", err), errors.WithUnexpectedPanic{})
+				unexpectedErr := cerrors.NewUnexpected(fmt.Errorf("%+v", err), cerrors.WithUnexpectedPanic{})
 
 				_ = c.Error(unexpectedErr)
 

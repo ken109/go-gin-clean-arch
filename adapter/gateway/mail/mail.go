@@ -9,7 +9,7 @@ import (
 
 	"go-gin-clean-arch/config"
 	"go-gin-clean-arch/domain/service/mailf"
-	"go-gin-clean-arch/packages/errors"
+	"go-gin-clean-arch/packages/cerrors"
 )
 
 type Sender interface {
@@ -52,7 +52,7 @@ func (s *sender) Send(m mailf.Mail) error {
 	dialer := gomail.NewDialer(config.Env.SMTP.Host, config.Env.SMTP.Port, config.Env.SMTP.User, config.Env.SMTP.Password)
 	err = dialer.DialAndSend(message)
 	if err != nil {
-		return errors.NewUnexpected(err)
+		return cerrors.NewUnexpected(err)
 	}
 
 	return nil
@@ -74,7 +74,7 @@ func (s *sender) BulkSend(mails []mailf.Mail) (err error) {
 		go func(m mailf.Mail) {
 			defer func() {
 				if r := recover(); r != nil {
-					errChan <- errors.NewUnexpected(r.(error), errors.WithUnexpectedPanic{})
+					errChan <- cerrors.NewUnexpected(r.(error), cerrors.WithUnexpectedPanic{})
 				}
 			}()
 			defer wg.Done()
@@ -109,7 +109,7 @@ func (s *sender) BulkSend(mails []mailf.Mail) (err error) {
 
 			err = dialer.DialAndSend(message)
 			if err != nil {
-				errChan <- errors.NewUnexpected(err)
+				errChan <- cerrors.NewUnexpected(err)
 				return
 			}
 		}(m)
