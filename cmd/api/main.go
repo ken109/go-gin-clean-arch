@@ -26,7 +26,7 @@ import (
 )
 
 func main() {
-	logger := log.Logger()
+	logger := log.ZapLogger()
 	defer logger.Sync()
 
 	err := jwt.SetUp(

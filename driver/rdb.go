@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"go-gin-clean-arch/config"
+	"go-gin-clean-arch/packages/log"
 )
 
 func NewRDB() (*gorm.DB, error) {
@@ -28,7 +29,7 @@ func NewRDB() (*gorm.DB, error) {
 		config.Env.DB.Name,
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: log.NewGorm()})
 	if err != nil {
 		return nil, err
 	}

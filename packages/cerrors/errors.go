@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 
 	"github.com/gin-contrib/requestid"
 
@@ -37,6 +38,21 @@ func (e Error) Error() string {
 		message += e.validation.Error()
 	}
 	return message
+}
+
+func (e Error) Is(target error) bool {
+	var err *Error
+	if errors.As(target, &err) {
+		switch e.kind {
+		case KindUnexpected:
+			return e.unexpected.message == err.unexpected.message && reflect.DeepEqual(e.unexpected.stack, err.unexpected.stack)
+		case KindExpected:
+			return e.expected.statusCode == err.expected.statusCode && e.expected.msg == err.expected.msg
+		case KindValidation:
+			return reflect.DeepEqual(e.validation.errors, err.validation.errors)
+		}
+	}
+	return false
 }
 
 func (e Error) MarshalJSON() ([]byte, error) {
