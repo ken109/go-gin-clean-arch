@@ -20,7 +20,6 @@ import (
 	"go-gin-clean-arch/adapter/gateway/mail"
 	mysqlRepository "go-gin-clean-arch/adapter/gateway/mysql"
 	"go-gin-clean-arch/config"
-	"go-gin-clean-arch/domain"
 	"go-gin-clean-arch/driver"
 	"go-gin-clean-arch/packages/log"
 	"go-gin-clean-arch/usecase"
@@ -63,11 +62,6 @@ func main() {
 		logger.Fatal(fmt.Sprintf("Failed to connect to DB: %+v", err))
 	}
 
-	err = db.AutoMigrate(&domain.User{})
-	if err != nil {
-		logger.Fatal(fmt.Sprintf("Failed to migrate DB: %+v", err))
-	}
-
 	// dependencies injection
 	// ----- gateway -----
 	mailSender := mail.NewMailSender()
@@ -92,7 +86,7 @@ func main() {
 	}
 
 	go func() {
-		if err = srv.ListenAndServe(); err != nil && !errors.Is(http.ErrServerClosed, err) {
+		if err = srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
 	}()

@@ -13,24 +13,26 @@ type TransactionRepository interface {
 }
 
 type SoftDeleteModel struct {
-	ID        xid.ID         `json:"id" gorm:"type:varchar(20);primaryKey;autoIncrement:false"`
+	ID        uint           `json:"-"`
+	XID       xid.ID         `json:"id" gorm:"column:xid"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
-	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+	DeletedAt gorm.DeletedAt `json:"-"`
 }
 
 func (base *SoftDeleteModel) BeforeCreate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("ID", xid.New())
+	tx.Statement.SetColumn("XID", xid.New())
 	return nil
 }
 
 type HardDeleteModel struct {
-	ID        xid.ID    `json:"id" gorm:"type:varchar(20);primaryKey;autoIncrement:false"`
+	ID        uint      `json:"-"`
+	XID       xid.ID    `json:"id" gorm:"column:xid"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 }
 
 func (base *HardDeleteModel) BeforeCreate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("ID", xid.New())
+	tx.Statement.SetColumn("XID", xid.New())
 	return nil
 }

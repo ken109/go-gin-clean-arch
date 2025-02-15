@@ -22,14 +22,14 @@ func (u user) Create(ctx context.Context, user *domain.User) (xid.ID, error) {
 		return xid.NilID(), dbError(err)
 	}
 
-	return user.ID, nil
+	return user.XID, nil
 }
 
-func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
+func (u user) GetByXID(ctx context.Context, xid xid.ID) (*domain.User, error) {
 	db := getDB(ctx)
 
 	var user domain.User
-	err := db.First(&user, id).Error
+	err := db.First(&user, map[string]interface{}{"xid": xid}).Error
 	if err != nil {
 		return nil, dbError(err)
 	}

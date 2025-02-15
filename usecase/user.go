@@ -27,7 +27,7 @@ type User interface {
 	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
 	RefreshToken(req *request.UserRefreshToken) (*response.UserLogin, error)
 
-	GetByID(ctx context.Context, id xid.ID) (*domain.User, error)
+	GetByXID(ctx context.Context, xid xid.ID) (*domain.User, error)
 }
 
 type user struct {
@@ -148,7 +148,7 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.User
 		var res response.UserLogin
 
 		res.Token, res.RefreshToken, err = jwt.IssueToken(config.UserRealm, jwt.Claims{
-			"uid": user.ID,
+			"uid": user.XID,
 		})
 		if err != nil {
 			return nil, cerrors.NewUnexpected(err)
@@ -176,8 +176,8 @@ func (u user) RefreshToken(req *request.UserRefreshToken) (*response.UserLogin, 
 	return &res, nil
 }
 
-func (u user) GetByID(ctx context.Context, id xid.ID) (*domain.User, error) {
-	res, err := u.userRepo.GetByID(ctx, id)
+func (u user) GetByXID(ctx context.Context, xid xid.ID) (*domain.User, error) {
+	res, err := u.userRepo.GetByXID(ctx, xid)
 	if err != nil {
 		return nil, err
 	}

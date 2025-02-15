@@ -1,9 +1,10 @@
-FROM golang:1.23 as dev
+FROM golang:1.23 AS dev
 
 WORKDIR /go/src
 
 RUN go install github.com/air-verse/air@v1.61.5
 RUN go install github.com/maoueh/zap-pretty/cmd/zap-pretty@v0.3.1
+RUN go install github.com/pressly/goose/v3/cmd/goose@v3.24.1
 
 COPY ./go.mod ./go.sum ./
 

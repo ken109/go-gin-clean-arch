@@ -41,7 +41,7 @@ func DecryptCTR(cipherText string, secretKey string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	c := []byte(decoded)
+	c := decoded
 	s := []byte(padLeft16Times(secretKey))
 	block, err := aes.NewCipher(s)
 	if err != nil {

@@ -12,7 +12,7 @@ import (
 
 type UserRepository interface {
 	Create(ctx context.Context, user *User) (xid.ID, error)
-	GetByID(ctx context.Context, id xid.ID) (*User, error)
+	GetByXID(ctx context.Context, xid xid.ID) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*User, error)
 	Update(ctx context.Context, user *User) error

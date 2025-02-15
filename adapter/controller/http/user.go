@@ -151,7 +151,7 @@ func (u user) RefreshToken(_ context.Context, c *gin.Context) error {
 }
 
 func (u user) GetMe(ctx context.Context, c *gin.Context) error {
-	res, err := u.usecase.GetByID(ctx, util.UID(ctx))
+	res, err := u.usecase.GetByXID(ctx, util.UID(ctx))
 	if err != nil {
 		return err
 	}
