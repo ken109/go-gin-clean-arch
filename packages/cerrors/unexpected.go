@@ -6,8 +6,8 @@ import (
 )
 
 type Unexpected struct {
-	message string
-	stack   []Frame
+	err   error
+	stack []Frame
 }
 
 type UnexpectedOption interface {
@@ -36,14 +36,18 @@ func NewUnexpected(err error, options ...UnexpectedOption) *Error {
 	return &Error{
 		kind: KindUnexpected,
 		unexpected: &Unexpected{
-			message: err.Error(),
-			stack:   callers(callerSkip),
+			err:   err,
+			stack: callers(callerSkip),
 		},
 	}
 }
 
 func (e Unexpected) Error() string {
-	return fmt.Sprintf("message: %s, stack: %s", e.message, e.stack)
+	return fmt.Sprintf("message: %s, stack: %s", e.err.Error(), e.stack)
+}
+
+func (e Unexpected) Unwrap() error {
+	return e.err
 }
 
 func (e Unexpected) MarshalJSON() ([]byte, error) {
@@ -51,7 +55,7 @@ func (e Unexpected) MarshalJSON() ([]byte, error) {
 		Message string  `json:"message"`
 		Stack   []Frame `json:"stack"`
 	}{
-		Message: e.message,
+		Message: e.err.Error(),
 		Stack:   e.stack,
 	})
 }

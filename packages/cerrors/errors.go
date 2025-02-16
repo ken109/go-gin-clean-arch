@@ -31,7 +31,7 @@ func (e Error) Error() string {
 	message := fmt.Sprintf("%s error: ", e.kind)
 	switch e.kind {
 	case KindUnexpected:
-		message += e.unexpected.message
+		message += e.unexpected.Error()
 	case KindExpected:
 		message += e.expected.Error()
 	case KindValidation:
@@ -45,7 +45,7 @@ func (e Error) Is(target error) bool {
 	if errors.As(target, &err) {
 		switch e.kind {
 		case KindUnexpected:
-			return e.unexpected.message == err.unexpected.message && reflect.DeepEqual(e.unexpected.stack, err.unexpected.stack)
+			return errors.Is(e.unexpected.err, err.unexpected.err) && reflect.DeepEqual(e.unexpected.stack, err.unexpected.stack)
 		case KindExpected:
 			return e.expected.statusCode == err.expected.statusCode && e.expected.msg == err.expected.msg
 		case KindValidation:
