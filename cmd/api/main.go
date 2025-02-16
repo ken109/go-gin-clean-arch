@@ -37,7 +37,7 @@ func main() {
 		},
 	)
 	if err != nil {
-		panic(err)
+		logger.Fatal(fmt.Sprintf("Failed to set up JWT: %+v", err))
 	}
 	logger.Info("Succeeded in setting up JWT.")
 
@@ -87,7 +87,7 @@ func main() {
 
 	go func() {
 		if err = srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			panic(err)
+			logger.Fatal(fmt.Sprintf("Failed to listen and serve: %+v", err))
 		}
 	}()
 
